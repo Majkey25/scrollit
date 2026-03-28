@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_permission_label">Accessibility service</string>
+    <string name="accessibility_permission_needed">Enable the accessibility service before auto scroll will work.</string>
+    <string name="accessibility_service_description">Performs repeated swipe gestures to scroll the current screen downward.</string>
+    <string name="accessibility_service_label">ScrollIt Accessibility</string>
+    <string name="app_name">ScrollIt Auto Scroll</string>
+    <string name="default_speed_label">Medium</string>
+    <string name="exit_button">Exit</string>
+    <string name="hide_button">Hide</string>
+    <string name="launch_overlay">Launch floating overlay</string>
+    <string name="main_description">Floating auto scroll tool for reading long pages on Samsung phones. Enable both permissions, then launch the overlay and control scrolling above other apps.</string>
+    <string name="notification_channel_name">Overlay service</string>
+    <string name="notification_text">Floating auto scroll overlay is active.</string>
+    <string name="notification_title">ScrollIt running</string>
+    <string name="open_accessibility_settings">Open accessibility settings</string>
+    <string name="open_overlay_settings">Open overlay permission settings</string>
+    <string name="overlay_accessibility_missing">Accessibility service is missing.</string>
+    <string name="overlay_accessibility_not_connected">Accessibility service is enabled, but Android has not connected it yet. Toggle it off and on if needed.</string>
+    <string name="overlay_accessibility_ready">Accessibility service is enabled.</string>
+    <string name="overlay_bubble_label">Open</string>
+    <string name="overlay_drag_title">Drag here</string>
+    <string name="overlay_gesture_failed">Gesture dispatch failed on this screen. Try another app or screen.</string>
+    <string name="overlay_idle">Ready.</string>
+    <string name="overlay_permission_label">Draw over other apps</string>
+    <string name="overlay_permission_needed">Allow draw over other apps before launching the floating overlay.</string>
+    <string name="overlay_running">Running at %1$s speed.</string>
+    <string name="overlay_stopped">Stopped.</string>
+    <string name="permission_enabled">Enabled</string>
+    <string name="permission_help">Required permissions:
+1. Draw over other apps lets the floating controller appear above websites and browser pages.
+2. Accessibility service lets the app send repeated swipe gestures for smooth downward scrolling.
+If either permission is missing, the app shows a clear status and the overlay Start action will not run silently.</string>
+    <string name="permission_missing">Missing</string>
+    <string name="speed_label">Speed</string>
+    <string name="start_button">Start</string>
+    <string name="status_header">Permission status</string>
+    <string name="stop_button">Stop</string>
+</resources>
