@@ -4,7 +4,7 @@
     <string name="accessibility_permission_needed">Enable the accessibility service before auto scroll will work.</string>
     <string name="accessibility_service_description">Performs repeated swipe gestures to scroll the current screen downward.</string>
     <string name="accessibility_service_label">ScrollIt Accessibility</string>
-    <string name="app_name">ScrollIt Auto Scroll</string>
+    <string name="app_name">ScrollIt</string>
     <string name="default_speed_label">Medium</string>
     <string name="exit_button">Exit</string>
     <string name="hide_button">Hide</string>
