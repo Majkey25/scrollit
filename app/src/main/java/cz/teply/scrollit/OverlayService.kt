@@ -15,6 +15,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
@@ -74,9 +75,7 @@ class OverlayService : Service() {
         bubbleView = null
 
         if (expandedView == null) {
-            expandedView = LayoutInflater.from(this)
-                .inflate(R.layout.overlay_controls, null)
-                .also(::bindExpandedOverlay)
+            expandedView = inflateOverlayLayout(R.layout.overlay_controls).also(::bindExpandedOverlay)
         }
 
         val params = expandedParams ?: createExpandedParams().also {
@@ -138,9 +137,10 @@ class OverlayService : Service() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         })
 
-        dragHandle.setOnTouchListener(createDragTouchListener(isBubble = false) {
+        dragHandle.setOnClickListener {
             refreshPermissionStatus()
-        })
+        }
+        dragHandle.setOnTouchListener(createDragTouchListener(isBubble = false))
 
         startButton.setOnClickListener {
             startAutoScroll()
@@ -165,11 +165,12 @@ class OverlayService : Service() {
         removeOverlay(view)
 
         if (bubbleView == null) {
-            bubbleView = LayoutInflater.from(this).inflate(R.layout.overlay_bubble, null).apply {
+            bubbleView = inflateOverlayLayout(R.layout.overlay_bubble).apply {
                 findViewById<TextView>(R.id.bubbleLabel).text = getString(R.string.overlay_bubble_label)
-                setOnTouchListener(createDragTouchListener(isBubble = true) {
+                setOnClickListener {
                     showExpandedOverlay()
-                })
+                }
+                setOnTouchListener(createDragTouchListener(isBubble = true))
             }
         }
 
@@ -194,7 +195,7 @@ class OverlayService : Service() {
         }
     }
 
-    private fun createDragTouchListener(isBubble: Boolean, onTap: () -> Unit): View.OnTouchListener {
+    private fun createDragTouchListener(isBubble: Boolean): View.OnTouchListener {
         val touchSlop = dp(8)
         var startX = 0
         var startY = 0
@@ -202,7 +203,7 @@ class OverlayService : Service() {
         var touchY = 0f
         var dragging = false
 
-        return View.OnTouchListener { _, event ->
+        return View.OnTouchListener { view, event ->
             val params = if (isBubble) bubbleParams else expandedParams
             val target = if (isBubble) bubbleView else expandedView
             if (params == null || target == null) {
@@ -252,10 +253,12 @@ class OverlayService : Service() {
                     }
 
                     if (!dragging) {
-                        onTap()
+                        view.performClick()
                     }
                     true
                 }
+
+                MotionEvent.ACTION_CANCEL -> true
 
                 else -> false
             }
@@ -380,6 +383,11 @@ class OverlayService : Service() {
         ).apply {
             gravity = Gravity.TOP or Gravity.START
         }
+    }
+
+    private fun inflateOverlayLayout(layoutResId: Int): View {
+        val parent = FrameLayout(this)
+        return LayoutInflater.from(this).inflate(layoutResId, parent, false)
     }
 
     private fun removeOverlay(view: View?) {

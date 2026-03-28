@@ -2,12 +2,11 @@ package cz.teply.scrollit
 
 import android.content.ComponentName
 import android.content.Context
-import android.os.Build
 import android.provider.Settings
 
 object PermissionState {
     fun hasOverlayPermission(context: Context): Boolean {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context)
+        return Settings.canDrawOverlays(context)
     }
 
     fun isAccessibilityEnabled(context: Context): Boolean {
