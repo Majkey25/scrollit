@@ -1,16 +1,18 @@
 package cz.teply.scrollit
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ScrollGestureProfileFactoryTest {
     @Test
-    fun levelOne_profileIsVerySlowAndSmall() {
+    fun levelOne_profileUsesTheSlowestReadableClamp() {
         val profile = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 1)
+        val distance = profile.startYFraction - profile.endYFraction
 
         assertTrue(profile.gestureDurationMs >= 1800L)
         assertTrue(profile.intervalMs >= 450L)
-        assertTrue(profile.startYFraction - profile.endYFraction <= 0.02f)
+        assertEquals(ScrollConfig.minGestureDistanceFraction, distance, 0.0001f)
     }
 
     @Test
