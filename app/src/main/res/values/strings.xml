@@ -9,7 +9,7 @@
     <string name="exit_button">Exit</string>
     <string name="hide_button">Hide</string>
     <string name="launch_overlay">Launch floating overlay</string>
-    <string name="main_description">Floating auto scroll tool for reading long pages on Samsung phones. Enable both permissions, then launch the overlay and control scrolling above other apps.</string>
+    <string name="main_description">Floating auto scroll tool for long browser pages and chord sites. Enable both permissions, then launch the overlay and control smooth downward scrolling above other apps.</string>
     <string name="notification_channel_name">Overlay service</string>
     <string name="notification_text">Floating auto scroll overlay is active.</string>
     <string name="notification_title">ScrollIt running</string>
@@ -19,7 +19,7 @@
     <string name="overlay_accessibility_not_connected">Accessibility service is enabled, but Android has not connected it yet. Toggle it off and on if needed.</string>
     <string name="overlay_accessibility_ready">Accessibility service is enabled.</string>
     <string name="overlay_bubble_label">Open</string>
-    <string name="overlay_drag_title">Drag here</string>
+    <string name="overlay_drag_title">Drag</string>
     <string name="overlay_gesture_failed">Gesture dispatch failed on this screen. Try another app or screen.</string>
     <string name="overlay_idle">Ready.</string>
     <string name="overlay_permission_label">Draw over other apps</string>
@@ -31,7 +31,7 @@
 1. Draw over other apps lets the floating controller appear above websites and browser pages.
 2. Accessibility service lets the app send repeated swipe gestures for smooth downward scrolling.
 If either permission is missing, the app shows a clear status and the overlay Start action will not run silently.</string>
-    <string name="permission_missing">Missing</string>
+    <string name="permission_missing">Needs action</string>
     <string name="speed_label">Speed</string>
     <string name="start_button">Start</string>
     <string name="status_header">Permission status</string>

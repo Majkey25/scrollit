@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="overlay_border">#22303A</color>
-    <color name="overlay_bubble">#0E5A6F</color>
-    <color name="overlay_handle">#144C5C</color>
-    <color name="overlay_panel">#F4F7F9</color>
+    <color name="overlay_border">#C7D2DA</color>
+    <color name="overlay_bubble">#0B7285</color>
+    <color name="overlay_handle">#07505F</color>
+    <color name="overlay_panel">#FFFFFF</color>
     <color name="status_error">#B42318</color>
-    <color name="status_ok">#067647</color>
-    <color name="window_background">#FFFFFF</color>
+    <color name="status_ok">#087443</color>
+    <color name="text_primary">#10222C</color>
+    <color name="text_secondary">#49606F</color>
+    <color name="window_background">#EEF3F6</color>
 </resources>

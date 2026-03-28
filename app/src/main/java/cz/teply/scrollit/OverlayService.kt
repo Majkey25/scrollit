@@ -3,12 +3,14 @@ package cz.teply.scrollit
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.os.IBinder
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -17,7 +19,6 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import androidx.core.app.PendingIntentCompat
 
 class OverlayService : Service() {
     private lateinit var windowManager: WindowManager
@@ -26,8 +27,8 @@ class OverlayService : Service() {
     private var expandedParams: WindowManager.LayoutParams? = null
     private var bubbleParams: WindowManager.LayoutParams? = null
     private var selectedSpeed = ScrollSpeed.MEDIUM
-    private var lastExpandedX = 0
-    private var lastExpandedY = 0
+    private var lastExpandedX: Int? = null
+    private var lastExpandedY: Int? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -73,22 +74,22 @@ class OverlayService : Service() {
         bubbleView = null
 
         if (expandedView == null) {
-            expandedView = layoutInflater.inflate(R.layout.overlay_controls, null).apply {
-                bindExpandedOverlay(this)
-            }
+            expandedView = LayoutInflater.from(this)
+                .inflate(R.layout.overlay_controls, null)
+                .also(::bindExpandedOverlay)
         }
 
         val params = expandedParams ?: createExpandedParams().also {
             expandedParams = it
         }
         params.x = OverlayPositioning.clampX(
-            lastExpandedX.takeIf { it > 0 } ?: params.x,
+            lastExpandedX ?: params.x,
             screenSize().x,
             params.width,
             dp(ScrollConfig.overlayMarginDp),
         )
         params.y = OverlayPositioning.clampY(
-            lastExpandedY.takeIf { it > 0 } ?: params.y,
+            lastExpandedY ?: params.y,
             screenSize().y,
             dp(ScrollConfig.expandedEstimatedHeightDp),
             dp(ScrollConfig.overlayMarginDp),
@@ -164,7 +165,7 @@ class OverlayService : Service() {
         removeOverlay(view)
 
         if (bubbleView == null) {
-            bubbleView = layoutInflater.inflate(R.layout.overlay_bubble, null).apply {
+            bubbleView = LayoutInflater.from(this).inflate(R.layout.overlay_bubble, null).apply {
                 findViewById<TextView>(R.id.bubbleLabel).text = getString(R.string.overlay_bubble_label)
                 setOnTouchListener(createDragTouchListener(isBubble = true) {
                     showExpandedOverlay()
@@ -315,12 +316,11 @@ class OverlayService : Service() {
 
     private fun buildNotification(): Notification {
         val openAppIntent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntentCompat.getActivity(
+        val pendingIntent = PendingIntent.getActivity(
             this,
             1,
             openAppIntent,
-            0,
-            false,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
         return NotificationCompat.Builder(this, ScrollConfig.notificationChannelId)
@@ -376,7 +376,7 @@ class OverlayService : Service() {
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-            android.graphics.PixelFormat.TRANSLUCENT,
+            PixelFormat.TRANSLUCENT,
         ).apply {
             gravity = Gravity.TOP or Gravity.START
         }

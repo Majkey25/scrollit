@@ -38,17 +38,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshPermissionStatus() {
-        overlayStatusValue.text = if (PermissionState.hasOverlayPermission(this)) {
-            getString(R.string.permission_enabled)
-        } else {
-            getString(R.string.permission_missing)
-        }
+        updateStatus(
+            view = overlayStatusValue,
+            enabled = PermissionState.hasOverlayPermission(this),
+        )
+        updateStatus(
+            view = accessibilityStatusValue,
+            enabled = PermissionState.isAccessibilityEnabled(this),
+        )
+    }
 
-        accessibilityStatusValue.text = if (PermissionState.isAccessibilityEnabled(this)) {
-            getString(R.string.permission_enabled)
-        } else {
-            getString(R.string.permission_missing)
-        }
+    private fun updateStatus(view: TextView, enabled: Boolean) {
+        view.text = getString(if (enabled) R.string.permission_enabled else R.string.permission_missing)
+        view.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (enabled) R.color.status_ok else R.color.status_error,
+            ),
+        )
     }
 
     private fun openOverlaySettings() {

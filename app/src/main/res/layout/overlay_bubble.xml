@@ -5,9 +5,9 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_overlay_bubble"
     android:gravity="center"
-    android:padding="8dp"
+    android:padding="10dp"
     android:text="@string/overlay_bubble_label"
     android:textAllCaps="true"
     android:textColor="@android:color/white"
-    android:textSize="12sp"
+    android:textSize="13sp"
     android:textStyle="bold" />
