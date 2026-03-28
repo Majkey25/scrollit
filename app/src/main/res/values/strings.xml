@@ -6,7 +6,7 @@
     <string name="accessibility_service_label">ScrollIt Accessibility</string>
     <string name="advanced_settings_title">Smooth tuning</string>
     <string name="app_name">ScrollIt</string>
-    <string name="default_speed_number">3</string>
+    <string name="default_speed_number">8</string>
     <string name="distance_value">%1$d %% base drag distance</string>
     <string name="duration_value">%1$d ms drag duration</string>
     <string name="exit_button">Exit</string>

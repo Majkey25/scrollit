@@ -8,15 +8,25 @@ class ScrollGestureProfileFactoryTest {
     fun levelOne_profileIsVerySlowAndSmall() {
         val profile = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 1)
 
-        assertTrue(profile.gestureDurationMs >= 1200L)
-        assertTrue(profile.intervalMs >= 180L)
-        assertTrue(profile.startYFraction - profile.endYFraction <= 0.05f)
+        assertTrue(profile.gestureDurationMs >= 1800L)
+        assertTrue(profile.intervalMs >= 450L)
+        assertTrue(profile.startYFraction - profile.endYFraction <= 0.02f)
+    }
+
+    @Test
+    fun firstFiveLevels_areSlowerThanOldLevelOneBaseline() {
+        val extraSlow = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 1)
+        val baseline = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 6)
+
+        assertTrue(extraSlow.gestureDurationMs > baseline.gestureDurationMs)
+        assertTrue(extraSlow.intervalMs > baseline.intervalMs)
+        assertTrue((extraSlow.startYFraction - extraSlow.endYFraction) < (baseline.startYFraction - baseline.endYFraction))
     }
 
     @Test
     fun higherSpeed_levelsIncreaseMovementAndReduceDelay() {
         val slow = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 1)
-        val fast = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 10)
+        val fast = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 15)
 
         assertTrue(fast.gestureDurationMs < slow.gestureDurationMs)
         assertTrue(fast.intervalMs < slow.intervalMs)
@@ -31,7 +41,7 @@ class ScrollGestureProfileFactoryTest {
                 intervalMs = ScrollSettings.MIN_INTERVAL_MS,
                 gestureDurationMs = ScrollSettings.MIN_GESTURE_DURATION_MS,
             ),
-            10,
+            15,
         )
 
         assertTrue(profile.intervalMs >= ScrollConfig.minGestureIntervalMs)
