@@ -9,7 +9,9 @@ ScrollIt is a Kotlin Android app for internal use on Samsung phones. It provides
 
 1. **Main app screen** for permission setup and advanced tuning.
 2. **Floating overlay** for runtime control of downward auto-scroll in other apps.
-![me](https://github.com/Majkey25/scrollit/tree/docs/me.gif)
+<p align="center">
+  <img src="docs/me.gif" alt="ScrollIt demo" width="340" />
+</p>
 
 
 ## What the app does
@@ -23,7 +25,9 @@ ScrollIt is a Kotlin Android app for internal use on Samsung phones. It provides
   - **Smooth** (smaller/faster gesture cycle)
 - Uses **10 speed levels** in overlay, controlled only by **+ / -** buttons.
 - Collapses into a small edge bubble and expands back on tap.
-<img width="1080" height="2316" alt="image" src="https://github.com/user-attachments/assets/6686afe8-4153-4688-9d69-9027ce5f0b47" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6686afe8-4153-4688-9d69-9027ce5f0b47" alt="Overlay controls" width="340" />
+</p>
 
 ## Required permissions
 
@@ -141,5 +145,7 @@ app/src/main/res/xml/
 ## License
 
 MIT. See [LICENSE](./LICENSE).
-<img width="834" height="675" alt="image" src="https://github.com/user-attachments/assets/01bea554-5b92-43a6-8fcf-3f39531466f0" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/01bea554-5b92-43a6-8fcf-3f39531466f0" alt="Main settings screen" width="560" />
+</p>
 
