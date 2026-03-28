@@ -1,12 +1,9 @@
 #!/bin/sh
+set -eu
 
-APP_HOME=$(cd "${0%/*}" && pwd -P)
-DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
-
-if [ -n "$JAVA_HOME" ]; then
-    JAVA_EXE="$JAVA_HOME/bin/java"
-else
-    JAVA_EXE="java"
+if command -v gradle >/dev/null 2>&1; then
+  exec gradle "$@"
 fi
 
-exec "$JAVA_EXE" $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "-Dorg.gradle.appname=gradlew" -classpath "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain "$@"
+echo "Gradle is not installed. Install Gradle 8.7+ or use Android Studio." >&2
+exit 1

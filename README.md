@@ -1,107 +1,140 @@
-# ScrollIt Auto Scroll
+# ScrollIt (Internal Samsung Auto-Scroll Tool)
 
-ScrollIt is a simple internal-use Android app written in Kotlin for Samsung phones. It shows a floating overlay above other apps and uses an `AccessibilityService` with `dispatchGesture()` to send repeated upward swipe gestures so long pages move downward in a practical reading flow.
+[![Repository](https://img.shields.io/badge/GitHub-Majkey25%2Fscrollit-181717?logo=github)](https://github.com/Majkey25/scrollit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Android%2014%2B-3DDC84?logo=android)](https://developer.android.com)
+[![Language](https://img.shields.io/badge/Language-Kotlin-7F52FF?logo=kotlin)](https://kotlinlang.org)
 
-## What the app includes
+ScrollIt is a Kotlin Android app for internal use on Samsung phones. It provides:
 
-- `MainActivity` with clear permission status and quick links to settings
-- `OverlayService` that shows a draggable floating controller and keeps itself alive with a foreground notification
-- `ScrollAccessibilityService` that performs repeated scroll gestures
-- compact floating overlay with `Start`, `Stop`, speed control, `Hide`, expand, and `Exit`
-- bubble mode that snaps to the left or right edge of the screen
-- buildable Gradle Android project with tests
+1. **Main app screen** for permission setup and advanced tuning.
+2. **Floating overlay** for runtime control of downward auto-scroll in other apps.
+
+## What the app does
+
+- Shows permission status (overlay + accessibility).
+- Opens the exact Android settings screens needed to enable permissions.
+- Starts a floating, draggable overlay above other apps.
+- Performs repeated downward-page scrolling using `AccessibilityService` + `dispatchGesture()`.
+- Supports two behavior modes from the main app:
+  - **Stable** (more conservative and reliable)
+  - **Smooth** (smaller/faster gesture cycle)
+- Uses **10 speed levels** in overlay, controlled only by **+ / -** buttons.
+- Collapses into a small edge bubble and expands back on tap.
 
 ## Required permissions
 
-- `Draw over other apps`: required so the floating controller can appear above the browser or other apps
-- `Accessibility service`: required so the app can dispatch repeated scroll gestures
-- `Foreground service`: required so the overlay service can stay alive while the overlay is visible
+1. **Draw over other apps** (`SYSTEM_ALERT_WINDOW`)
+2. **Accessibility service** (ScrollIt Accessibility)
+3. **Foreground service** (overlay runs as foreground service)
 
-## Open the project
+## Build APK
 
-1. Install Android Studio with Android SDK Platform 34 and Build-Tools 34.x.
-2. Open Android Studio.
-3. Choose **Open** and select `c:\Users\teply\Documents\scrollit`.
-4. Let Gradle sync finish.
+> Note: this repository uses text-only launcher scripts (`gradlew`, `gradlew.bat`) that call a local Gradle installation.
 
-## Build the APK
-
-### Android Studio
-
-1. Open the **Build** menu.
-2. Run **Build Bundle(s) / APK(s) > Build APK(s)**.
-
-### Command line on Windows
-
-1. Make sure JDK 17 and Android SDK are installed.
-2. Run:
+### Windows (recommended)
 
 ```powershell
-cd c:\Users\teply\Documents\scrollit
-.\gradlew.bat assembleDebug
+cd C:\Users\teply\Documents\scrollit
+.\gradlew.bat testDebugUnitTest assembleDebug lintDebug
 ```
 
-Expected APK path after a successful debug build:
+### Linux/macOS
 
-```text
-c:\Users\teply\Documents\scrollit\app\build\outputs\apk\debug\app-debug.apk
+```bash
+cd /workspace/scrollit
+./gradlew testDebugUnitTest assembleDebug lintDebug
 ```
 
-## Install the APK over USB with ADB
+### Expected APK path
+
+- Relative: `app/build/outputs/apk/debug/app-debug.apk`
+- Example absolute (Linux in this repo): `/workspace/scrollit/app/build/outputs/apk/debug/app-debug.apk`
+- Example absolute (Windows): `C:\Users\teply\Documents\scrollit\app\build\outputs\apk\debug\app-debug.apk`
+
+## USB install via ADB
 
 ```powershell
 adb devices
-adb install -r c:\Users\teply\Documents\scrollit\app\build\outputs\apk\debug\app-debug.apk
+adb install -r C:\Users\teply\Documents\scrollit\app\build\outputs\apk\debug\app-debug.apk
 ```
 
-## Enable Developer options and USB debugging on Samsung phones
+## Samsung setup
 
-1. Open **Settings > About phone > Software information**.
-2. Tap **Build number** seven times.
-3. Go back to **Settings** and open **Developer options**.
-4. Enable **Developer options**.
-5. Enable **USB debugging**.
-6. Connect the phone by USB and accept the RSA prompt on the phone.
+### Enable Developer options
 
-## Enable draw over other apps
+1. `Settings` → `About phone` → `Software information`
+2. Tap **Build number** 7 times
 
-1. Open ScrollIt.
-2. Tap **Open overlay permission settings**.
-3. Find **ScrollIt**.
-4. Allow **Appear on top** or **Draw over other apps**.
+### Enable USB debugging
 
-## Enable the accessibility service
+1. `Settings` → `Developer options`
+2. Enable **USB debugging**
+3. Connect USB and confirm RSA key prompt
 
-1. Open ScrollIt.
-2. Tap **Open accessibility settings**.
-3. Open **Installed apps** or the Samsung accessibility service list.
-4. Select **ScrollIt Accessibility**.
-5. Turn it on and confirm the warning dialog.
+### Enable overlay permission
 
-## How to test the app
+1. Open ScrollIt
+2. Tap **Open overlay permission settings**
+3. Enable **Appear on top** for ScrollIt
 
-1. Open ScrollIt.
-2. Confirm both status rows change to **Enabled** after permissions are granted.
+### Enable accessibility service
+
+1. Open ScrollIt
+2. Tap **Open accessibility settings**
+3. `Accessibility` → `Installed apps` → **ScrollIt Accessibility**
+4. Enable service and confirm warning dialogs
+
+## How to test all features
+
+1. Open ScrollIt and check both status rows are **Enabled**.
+2. In **Advanced tuning**, set:
+   - mode (Stable / Smooth)
+   - distance
+   - interval
+   - gesture duration
 3. Tap **Launch floating overlay**.
-4. Verify the compact floating panel appears above the current app.
-5. Drag the panel by the top handle.
-6. Change the speed slider and confirm the label changes between the four speed levels.
-7. Tap **Start** on a browser page with long content.
-8. Confirm the page scrolls downward repeatedly.
-9. Tap **Stop** and confirm scrolling stops immediately.
-10. Tap **Hide** and confirm the overlay collapses into a small edge bubble.
-11. Tap the bubble and confirm the full panel expands again.
-12. Tap **Exit** and confirm the overlay disappears and the foreground service notification is removed.
+4. Drag overlay to desired place.
+5. Tap **Start** on long page (Samsung Internet / Chrome).
+6. Verify page scrolls downward repeatedly.
+7. Tap **+** and **-**:
+   - speed number updates `1..10`
+   - change applies while scrolling is already running
+8. Tap **Stop** and verify scrolling stops immediately.
+9. Tap **Hide** and verify bubble appears on screen edge.
+10. Tap bubble and verify overlay expands back.
+11. Tap **Exit** and verify overlay closes and foreground notification disappears.
+12. Disable accessibility and tap **Start** again:
+   - verify visible error message, not silent failure.
 
-## Known Android limitations
+## Known limitations
 
-- Accessibility gesture scrolling depends on the current app accepting swipe gestures. Some screens will ignore gestures.
-- Long gesture loops can feel slightly different across Samsung One UI versions and browser apps.
-- Overlay placement can shift slightly on devices with display cutouts, gesture navigation, or unusual screen scaling.
-- The emulator can confirm app structure and wiring, but real device behavior for overlay and accessibility permissions is still the most important validation.
+- Some apps/screens ignore injected accessibility gestures.
+- Gesture behavior differs slightly across One UI versions.
+- Exact smoothness depends on app rendering and refresh timing.
+- `connectedDebugAndroidTest` needs emulator or physical device.
 
-## Expected behavior on real Samsung devices
+## Project structure (key files)
 
-- Samsung Internet and Chrome long pages should respond to the repeated upward swipe gestures on most normal reading pages.
-- If Android kills the overlay service, reopening the app and launching the overlay again restores it.
-- If the accessibility service is toggled off while the overlay is open, `Start` shows a clear error state instead of silently failing.
+```text
+app/src/main/java/cz/teply/scrollit/
+  MainActivity.kt
+  OverlayService.kt
+  ScrollAccessibilityService.kt
+  ScrollMode.kt
+  ScrollSettings.kt
+  ScrollSettingsStore.kt
+  ScrollSpeed.kt
+
+app/src/main/res/layout/
+  activity_main.xml
+  overlay_controls.xml
+  overlay_bubble.xml
+
+app/src/main/res/xml/
+  scroll_accessibility_service.xml
+```
+
+## License
+
+MIT. See [LICENSE](./LICENSE).

@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_overlay_panel"
     android:orientation="vertical"
-    android:padding="14dp">
+    android:padding="10dp">
 
     <cz.teply.scrollit.OverlayDragHandleView
         android:id="@+id/overlayDragHandle"
@@ -12,104 +12,92 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bg_drag_handle"
         android:gravity="center"
-        android:padding="9dp"
+        android:padding="8dp"
         android:text="@string/overlay_drag_title"
         android:textColor="@android:color/white"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/permissionStatusText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:text="@string/overlay_accessibility_missing"
         android:textColor="@color/status_error"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/actionStatusText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="2dp"
         android:text="@string/overlay_idle"
         android:textColor="@color/status_ok"
-        android:textSize="13sp" />
+        android:textSize="12sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/startButton"
+            android:id="@+id/startStopButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="44dp"
             android:layout_weight="1"
-            android:minHeight="46dp"
             android:text="@string/start_button"
             android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/stopButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:minHeight="46dp"
-            android:text="@string/stop_button"
+            android:id="@+id/speedMinusButton"
+            android:layout_width="40dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="6dp"
+            android:text="-"
+            android:textAllCaps="false" />
+
+        <TextView
+            android:id="@+id/speedValueText"
+            android:layout_width="34dp"
+            android:layout_height="44dp"
+            android:gravity="center"
+            android:text="@string/default_speed_number"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/speedPlusButton"
+            android:layout_width="40dp"
+            android:layout_height="44dp"
+            android:text="+"
             android:textAllCaps="false" />
     </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/speed_label"
-        android:textColor="@color/text_primary"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/speedValueText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:text="@string/default_speed_label"
-        android:textColor="@color/text_secondary"
-        android:textSize="15sp"
-        android:textStyle="bold" />
-
-    <SeekBar
-        android:id="@+id/speedSeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:gravity="center"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/hideButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
             android:layout_weight="1"
-            android:minHeight="46dp"
             android:text="@string/hide_button"
             android:textAllCaps="false" />
 
         <Button
             android:id="@+id/exitButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:minHeight="46dp"
             android:text="@string/exit_button"
             android:textAllCaps="false" />
     </LinearLayout>

@@ -16,7 +16,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -27,7 +26,7 @@ class OverlayService : Service() {
     private var bubbleView: View? = null
     private var expandedParams: WindowManager.LayoutParams? = null
     private var bubbleParams: WindowManager.LayoutParams? = null
-    private var selectedSpeed = ScrollSpeed.MEDIUM
+    private var selectedSpeedLevel = ScrollSpeed.DEFAULT_LEVEL
     private var lastExpandedX: Int? = null
     private var lastExpandedY: Int? = null
 
@@ -54,6 +53,8 @@ class OverlayService : Service() {
             showExpandedOverlay()
         } else {
             refreshPermissionStatus()
+            renderSpeedLevel()
+            renderRunningState()
         }
 
         return START_NOT_STICKY
@@ -78,9 +79,7 @@ class OverlayService : Service() {
             expandedView = inflateOverlayLayout(R.layout.overlay_controls).also(::bindExpandedOverlay)
         }
 
-        val params = expandedParams ?: createExpandedParams().also {
-            expandedParams = it
-        }
+        val params = expandedParams ?: createExpandedParams().also { expandedParams = it }
         params.x = OverlayPositioning.clampX(
             lastExpandedX ?: params.x,
             screenSize().x,
@@ -101,59 +100,59 @@ class OverlayService : Service() {
         }
 
         refreshPermissionStatus()
-        updateActionStatus(
-            if (ScrollAccessibilityService.instance?.isAutoScrollRunning() == true) {
-                getString(R.string.overlay_running, selectedSpeed.title)
-            } else {
-                getString(R.string.overlay_idle)
-            },
-            isError = false,
-        )
+        renderSpeedLevel()
+        renderRunningState()
     }
 
     private fun bindExpandedOverlay(view: View) {
-        val dragHandle = view.findViewById<OverlayDragHandleView>(R.id.overlayDragHandle)
-        val speedLabel = view.findViewById<TextView>(R.id.speedValueText)
-        val speedSeekBar = view.findViewById<SeekBar>(R.id.speedSeekBar)
-        val startButton = view.findViewById<Button>(R.id.startButton)
-        val stopButton = view.findViewById<Button>(R.id.stopButton)
-        val hideButton = view.findViewById<Button>(R.id.hideButton)
-        val exitButton = view.findViewById<Button>(R.id.exitButton)
+        view.findViewById<View>(R.id.overlayDragHandle).setOnTouchListener(createDragTouchListener(isBubble = false))
 
-        speedLabel.text = selectedSpeed.title
-        speedSeekBar.max = ScrollSpeed.entries.size - 1
-        speedSeekBar.progress = selectedSpeed.ordinal
-        speedSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                selectedSpeed = ScrollSpeed.fromProgress(progress)
-                speedLabel.text = selectedSpeed.title
-                if (ScrollAccessibilityService.instance?.isAutoScrollRunning() == true) {
-                    startAutoScroll()
-                }
+        view.findViewById<Button>(R.id.speedMinusButton).setOnClickListener {
+            selectedSpeedLevel = ScrollSpeed.stepDown(selectedSpeedLevel)
+            ScrollAccessibilityService.instance?.updateSpeedLevel(selectedSpeedLevel)
+            renderSpeedLevel()
+            renderRunningState()
+        }
+
+        view.findViewById<Button>(R.id.speedPlusButton).setOnClickListener {
+            selectedSpeedLevel = ScrollSpeed.stepUp(selectedSpeedLevel)
+            ScrollAccessibilityService.instance?.updateSpeedLevel(selectedSpeedLevel)
+            renderSpeedLevel()
+            renderRunningState()
+        }
+
+        view.findViewById<Button>(R.id.startStopButton).setOnClickListener {
+            if (ScrollAccessibilityService.instance?.isAutoScrollRunning() == true) {
+                stopAutoScroll()
+                updateActionStatus(getString(R.string.overlay_stopped), isError = false)
+            } else {
+                startAutoScroll()
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-        })
-
-        dragHandle.setOnClickListener {
-            refreshPermissionStatus()
+            renderRunningState()
         }
-        dragHandle.setOnTouchListener(createDragTouchListener(isBubble = false))
 
-        startButton.setOnClickListener {
-            startAutoScroll()
-        }
-        stopButton.setOnClickListener {
-            stopAutoScroll()
-            updateActionStatus(getString(R.string.overlay_stopped), isError = false)
-        }
-        hideButton.setOnClickListener {
+        view.findViewById<Button>(R.id.hideButton).setOnClickListener {
             collapseToBubble()
         }
-        exitButton.setOnClickListener {
+
+        view.findViewById<Button>(R.id.exitButton).setOnClickListener {
             shutdownOverlay()
+        }
+    }
+
+    private fun renderSpeedLevel() {
+        val view = expandedView ?: return
+        view.findViewById<TextView>(R.id.speedValueText).text = selectedSpeedLevel.toString()
+    }
+
+    private fun renderRunningState() {
+        val view = expandedView ?: return
+        val running = ScrollAccessibilityService.instance?.isAutoScrollRunning() == true
+        val button = view.findViewById<Button>(R.id.startStopButton)
+        button.text = getString(if (running) R.string.stop_button else R.string.start_button)
+
+        if (running) {
+            updateActionStatus(getString(R.string.overlay_running, selectedSpeedLevel), isError = false)
         }
     }
 
@@ -167,17 +166,13 @@ class OverlayService : Service() {
         if (bubbleView == null) {
             bubbleView = inflateOverlayLayout(R.layout.overlay_bubble).apply {
                 findViewById<TextView>(R.id.bubbleLabel).text = getString(R.string.overlay_bubble_label)
-                setOnClickListener {
-                    showExpandedOverlay()
-                }
+                setOnClickListener { showExpandedOverlay() }
                 setOnTouchListener(createDragTouchListener(isBubble = true))
             }
         }
 
         val bubble = bubbleView ?: return
-        val bubbleLayoutParams = bubbleParams ?: createBubbleParams().also {
-            bubbleParams = it
-        }
+        val bubbleLayoutParams = bubbleParams ?: createBubbleParams().also { bubbleParams = it }
         bubbleLayoutParams.x = OverlayPositioning.snapBubbleToEdge(
             params.x,
             screenSize().x,
@@ -227,18 +222,8 @@ class OverlayService : Service() {
                     val screen = screenSize()
                     val width = if (isBubble) params.width else dp(ScrollConfig.expandedWidthDp)
                     val height = if (isBubble) params.height else dp(ScrollConfig.expandedEstimatedHeightDp)
-                    params.x = OverlayPositioning.clampX(
-                        startX + deltaX,
-                        screen.x,
-                        width,
-                        dp(ScrollConfig.overlayMarginDp),
-                    )
-                    params.y = OverlayPositioning.clampY(
-                        startY + deltaY,
-                        screen.y,
-                        height,
-                        dp(ScrollConfig.overlayMarginDp),
-                    )
+                    params.x = OverlayPositioning.clampX(startX + deltaX, screen.x, width, dp(ScrollConfig.overlayMarginDp))
+                    params.y = OverlayPositioning.clampY(startY + deltaY, screen.y, height, dp(ScrollConfig.overlayMarginDp))
                     windowManager.updateViewLayout(target, params)
                     true
                 }
@@ -259,7 +244,6 @@ class OverlayService : Service() {
                 }
 
                 MotionEvent.ACTION_CANCEL -> true
-
                 else -> false
             }
         }
@@ -282,10 +266,12 @@ class OverlayService : Service() {
             return
         }
 
-        when (val result = service.startAutoScroll(selectedSpeed)) {
-            AutoScrollResult.Started -> {
-                updateActionStatus(getString(R.string.overlay_running, selectedSpeed.title), isError = false)
-            }
+        val settings = ScrollSettingsStore.load(this)
+        when (val result = service.startAutoScroll(selectedSpeedLevel, settings)) {
+            AutoScrollResult.Started -> updateActionStatus(
+                getString(R.string.overlay_running, selectedSpeedLevel),
+                isError = false,
+            )
 
             is AutoScrollResult.Failed -> {
                 updateActionStatus(result.message, isError = true)
@@ -301,13 +287,13 @@ class OverlayService : Service() {
     private fun refreshPermissionStatus() {
         val view = expandedView ?: return
         val permissionStatus = view.findViewById<TextView>(R.id.permissionStatusText)
-        val isEnabled = PermissionState.isAccessibilityEnabled(this)
-        permissionStatus.text = if (isEnabled) {
+        val enabled = PermissionState.isAccessibilityEnabled(this)
+        permissionStatus.text = if (enabled) {
             getString(R.string.overlay_accessibility_ready)
         } else {
             getString(R.string.overlay_accessibility_missing)
         }
-        permissionStatus.setTextColor(getColor(if (isEnabled) R.color.status_ok else R.color.status_error))
+        permissionStatus.setTextColor(getColor(if (enabled) R.color.status_ok else R.color.status_error))
     }
 
     private fun updateActionStatus(message: String, isError: Boolean) {
@@ -352,20 +338,14 @@ class OverlayService : Service() {
         val screen = screenSize()
         val width = dp(ScrollConfig.expandedWidthDp)
         val margin = dp(ScrollConfig.overlayMarginDp)
-        return baseLayoutParams(
-            width = width,
-            height = WindowManager.LayoutParams.WRAP_CONTENT,
-        ).apply {
+        return baseLayoutParams(width, WindowManager.LayoutParams.WRAP_CONTENT).apply {
             x = (screen.x - width - margin).coerceAtLeast(margin)
             y = (screen.y * ScrollConfig.initialOverlayYFraction).toInt()
         }
     }
 
     private fun createBubbleParams(): WindowManager.LayoutParams {
-        return baseLayoutParams(
-            width = dp(ScrollConfig.bubbleWidthDp),
-            height = dp(ScrollConfig.bubbleHeightDp),
-        ).apply {
+        return baseLayoutParams(dp(ScrollConfig.bubbleWidthDp), dp(ScrollConfig.bubbleHeightDp)).apply {
             x = screenSize().x - width
             y = (screenSize().y * ScrollConfig.initialOverlayYFraction).toInt()
         }
@@ -407,9 +387,7 @@ class OverlayService : Service() {
         return Point(metrics.widthPixels, metrics.heightPixels)
     }
 
-    private fun dp(value: Int): Int {
-        return (value * resources.displayMetrics.density).toInt()
-    }
+    private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
 
     companion object {
         const val ACTION_EXIT = "cz.teply.scrollit.action.EXIT"
