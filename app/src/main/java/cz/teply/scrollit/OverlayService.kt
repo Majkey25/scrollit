@@ -112,7 +112,7 @@ class OverlayService : Service() {
     }
 
     private fun bindExpandedOverlay(view: View) {
-        val dragHandle = view.findViewById<TextView>(R.id.overlayDragHandle)
+        val dragHandle = view.findViewById<OverlayDragHandleView>(R.id.overlayDragHandle)
         val speedLabel = view.findViewById<TextView>(R.id.speedValueText)
         val speedSeekBar = view.findViewById<SeekBar>(R.id.speedSeekBar)
         val startButton = view.findViewById<Button>(R.id.startButton)
