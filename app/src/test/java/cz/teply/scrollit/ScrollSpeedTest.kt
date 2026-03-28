@@ -1,21 +1,28 @@
 package cz.teply.scrollit
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ScrollSpeedTest {
     @Test
-    fun fromProgress_clampsBelowRangeToVerySlow() {
-        assertEquals(ScrollSpeed.VERY_SLOW, ScrollSpeed.fromProgress(-1))
+    fun clamp_limitsLevelInsideOneToTen() {
+        assertEquals(1, ScrollSpeed.clamp(-2))
+        assertEquals(10, ScrollSpeed.clamp(42))
     }
 
     @Test
-    fun fromProgress_returnsMediumForMiddleValue() {
-        assertEquals(ScrollSpeed.MEDIUM, ScrollSpeed.fromProgress(2))
+    fun stepUpAndDown_keepBoundaries() {
+        assertEquals(10, ScrollSpeed.stepUp(10))
+        assertEquals(1, ScrollSpeed.stepDown(1))
+        assertEquals(5, ScrollSpeed.stepUp(4))
+        assertEquals(4, ScrollSpeed.stepDown(5))
     }
 
     @Test
-    fun fromProgress_clampsAboveRangeToFast() {
-        assertEquals(ScrollSpeed.FAST, ScrollSpeed.fromProgress(9))
+    fun factors_progressInUsableDirection() {
+        assertTrue(ScrollSpeed.intervalFactor(1) > ScrollSpeed.intervalFactor(10))
+        assertTrue(ScrollSpeed.durationFactor(1) > ScrollSpeed.durationFactor(10))
+        assertTrue(ScrollSpeed.distanceFactor(1) < ScrollSpeed.distanceFactor(10))
     }
 }
