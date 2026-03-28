@@ -128,16 +128,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/scroll_mode_label"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
-
-            <Spinner
-                android:id="@+id/modeSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp" />
+                android:layout_marginTop="8dp"
+                android:text="@string/smooth_mode_only"
+                android:textColor="@color/text_secondary" />
 
             <TextView
                 android:layout_width="match_parent"

@@ -2,19 +2,19 @@
 <resources>
     <string name="accessibility_permission_label">Accessibility service</string>
     <string name="accessibility_permission_needed">Enable the accessibility service before auto scroll will work.</string>
-    <string name="accessibility_service_description">Performs repeated swipe gestures to scroll the current screen downward.</string>
+    <string name="accessibility_service_description">Performs repeated smooth drag gestures to move the current screen downward.</string>
     <string name="accessibility_service_label">ScrollIt Accessibility</string>
-    <string name="advanced_settings_title">Advanced tuning</string>
+    <string name="advanced_settings_title">Smooth tuning</string>
     <string name="app_name">ScrollIt</string>
-    <string name="default_speed_number">4</string>
-    <string name="distance_value">%1$d %% of screen height</string>
-    <string name="duration_value">%1$d ms gesture duration</string>
+    <string name="default_speed_number">3</string>
+    <string name="distance_value">%1$d %% base drag distance</string>
+    <string name="duration_value">%1$d ms drag duration</string>
     <string name="exit_button">Exit</string>
-    <string name="gesture_duration_label">Gesture duration (compatibility)</string>
+    <string name="gesture_duration_label">Drag duration</string>
     <string name="hide_button">Hide</string>
-    <string name="interval_value">%1$d ms between gestures</string>
+    <string name="interval_value">%1$d ms pause after each drag</string>
     <string name="launch_overlay">Launch floating overlay</string>
-    <string name="main_description">Floating auto-scroll tool for Samsung phones. Enable both permissions, tune mode and timing, then launch the overlay and control downward scrolling inside other apps.</string>
+    <string name="main_description">Floating auto-scroll tool for Samsung phones. ScrollIt now uses a smooth-only scrolling engine with longer, smaller drags so the page moves downward more gently.</string>
     <string name="notification_channel_name">Overlay service</string>
     <string name="notification_text">Floating auto-scroll overlay is active.</string>
     <string name="notification_title">ScrollIt running</string>
@@ -34,12 +34,12 @@
     <string name="permission_enabled">Enabled</string>
     <string name="permission_help">Required permissions:
 1. Draw over other apps lets the floating controller appear above websites and browser pages.
-2. Accessibility service lets the app send repeated swipe gestures for downward scrolling.
+2. Accessibility service lets the app send repeated drag gestures for downward scrolling.
 If either permission is missing, Start will show a clear error and scrolling will not run silently.</string>
     <string name="permission_missing">Needs action</string>
-    <string name="scroll_distance_label">Scroll distance</string>
-    <string name="scroll_interval_label">Scroll interval</string>
-    <string name="scroll_mode_label">Scroll mode</string>
+    <string name="scroll_distance_label">Drag distance</string>
+    <string name="scroll_interval_label">Pause between drags</string>
+    <string name="smooth_mode_only">Mode is fixed to Smooth. Use the controls below to make the movement gentler or faster for your phone and browser.</string>
     <string name="start_button">Start</string>
     <string name="status_header">Permission status</string>
     <string name="stop_button">Stop</string>

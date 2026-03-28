@@ -20,9 +20,10 @@ class ScrollSpeedTest {
     }
 
     @Test
-    fun factors_progressInUsableDirection() {
+    fun levelOne_isMuchSlowerAndGentlerThanLevelTen() {
         assertTrue(ScrollSpeed.intervalFactor(1) > ScrollSpeed.intervalFactor(10))
         assertTrue(ScrollSpeed.durationFactor(1) > ScrollSpeed.durationFactor(10))
         assertTrue(ScrollSpeed.distanceFactor(1) < ScrollSpeed.distanceFactor(10))
+        assertEquals(3, ScrollSpeed.DEFAULT_LEVEL)
     }
 }

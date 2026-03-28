@@ -4,10 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.SeekBar
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +14,6 @@ import androidx.core.content.ContextCompat
 class MainActivity : AppCompatActivity() {
     private lateinit var overlayStatusValue: TextView
     private lateinit var accessibilityStatusValue: TextView
-    private lateinit var modeSpinner: Spinner
     private lateinit var distanceSeekBar: SeekBar
     private lateinit var intervalSeekBar: SeekBar
     private lateinit var durationSeekBar: SeekBar
@@ -30,7 +27,6 @@ class MainActivity : AppCompatActivity() {
 
         overlayStatusValue = findViewById(R.id.overlayStatusValue)
         accessibilityStatusValue = findViewById(R.id.accessibilityStatusValue)
-        modeSpinner = findViewById(R.id.modeSpinner)
         distanceSeekBar = findViewById(R.id.distanceSeekBar)
         intervalSeekBar = findViewById(R.id.intervalSeekBar)
         durationSeekBar = findViewById(R.id.durationSeekBar)
@@ -53,16 +49,6 @@ class MainActivity : AppCompatActivity() {
     private fun bindSettingsControls() {
         val settings = ScrollSettingsStore.load(this)
 
-        val modeAdapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_item,
-            ScrollMode.entries.map { it.title },
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
-        modeSpinner.adapter = modeAdapter
-        modeSpinner.setSelection(settings.mode.ordinal)
-
         distanceSeekBar.max = ScrollSettings.MAX_DISTANCE_PERCENT - ScrollSettings.MIN_DISTANCE_PERCENT
         intervalSeekBar.max = ScrollSettings.MAX_INTERVAL_MS - ScrollSettings.MIN_INTERVAL_MS
         durationSeekBar.max = ScrollSettings.MAX_GESTURE_DURATION_MS - ScrollSettings.MIN_GESTURE_DURATION_MS
@@ -72,10 +58,6 @@ class MainActivity : AppCompatActivity() {
         durationSeekBar.progress = settings.gestureDurationMs - ScrollSettings.MIN_GESTURE_DURATION_MS
 
         updateSettingsValueLabels(settings)
-
-        modeSpinner.setOnItemSelectedListener(SimpleItemSelectedListener {
-            saveSettingsFromControls()
-        })
 
         distanceSeekBar.setOnSeekBarChangeListener(SimpleSeekBarListener {
             saveSettingsFromControls()
@@ -90,7 +72,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveSettingsFromControls() {
         val settings = ScrollSettings(
-            mode = ScrollMode.entries[modeSpinner.selectedItemPosition],
             distancePercent = ScrollSettings.MIN_DISTANCE_PERCENT + distanceSeekBar.progress,
             intervalMs = ScrollSettings.MIN_INTERVAL_MS + intervalSeekBar.progress,
             gestureDurationMs = ScrollSettings.MIN_GESTURE_DURATION_MS + durationSeekBar.progress,

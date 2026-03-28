@@ -56,7 +56,7 @@ class ScrollAccessibilityService : AccessibilityService() {
     fun isAutoScrollRunning(): Boolean = running
 
     private fun dispatchNextGesture(): AutoScrollResult {
-        val profile = currentProfile()
+        val profile = ScrollGestureProfileFactory.create(settings, speedLevel)
 
         val path = Path()
         val width = resources.displayMetrics.widthPixels.toFloat()
@@ -96,37 +96,6 @@ class ScrollAccessibilityService : AccessibilityService() {
         }
 
         return AutoScrollResult.Started
-    }
-
-    private fun currentProfile(): GestureProfile {
-        val mode = settings.mode
-        val interval = (
-            settings.intervalMs *
-                mode.intervalScale *
-                ScrollSpeed.intervalFactor(speedLevel)
-            ).toLong().coerceIn(190L, 2200L)
-
-        val gestureDuration = (
-            settings.gestureDurationMs *
-                mode.durationScale *
-                ScrollSpeed.durationFactor(speedLevel)
-            ).toLong().coerceIn(120L, 800L)
-
-        val distanceFraction = (
-            settings.distancePercent / 100f *
-                mode.distanceScale *
-                ScrollSpeed.distanceFactor(speedLevel)
-            ).coerceIn(0.11f, 0.45f)
-
-        val startY = 0.82f
-        val endY = (startY - distanceFraction).coerceAtLeast(0.20f)
-
-        return GestureProfile(
-            intervalMs = interval,
-            gestureDurationMs = gestureDuration,
-            startYFraction = startY,
-            endYFraction = endY,
-        )
     }
 
     companion object {
