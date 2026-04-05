@@ -59,6 +59,28 @@ cd /workspace/scrollit
 - Example absolute (Linux in this repo): `/workspace/scrollit/app/build/outputs/apk/debug/app-debug.apk`
 - Example absolute (Windows): `C:\Users\teply\Documents\scrollit\app\build\outputs\apk\debug\app-debug.apk`
 
+## GitHub release APK
+
+This repository now publishes installable APK files from GitHub tags that start with `v`.
+
+### Recommended first public tag
+
+- `v1.0.0-beta.1`
+
+### What the workflow does
+
+1. Runs `testDebugUnitTest`, `lintDebug`, and `assembleDebug`
+2. Renames the artifact to `scrollit-vX.Y.Z-debug.apk`
+3. Creates or updates the matching GitHub release
+4. Marks the release as a prerelease when the tag contains a suffix such as `-beta.1`
+
+### Real release flow
+
+1. Push the commit that contains `.github/workflows/release-apk.yml`
+2. Create a tag such as `v1.0.0-beta.1`
+3. Push the tag to GitHub
+4. Download the APK from the release Assets section
+
 ## USB install via ADB
 
 ```powershell
