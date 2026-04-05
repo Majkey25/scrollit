@@ -1,6 +1,8 @@
 # ScrollIt (Internal Samsung Auto-Scroll Tool)
 
 [![Repository](https://img.shields.io/badge/GitHub-Majkey25%2Fscrollit-181717?logo=github)](https://github.com/Majkey25/scrollit)
+[![Release](https://img.shields.io/github/v/release/Majkey25/scrollit?include_prereleases&display_name=tag)](https://github.com/Majkey25/scrollit/releases/tag/v1.0.0-beta.1)
+[![Download APK](https://img.shields.io/badge/Download-APK-3DDC84?logo=android&logoColor=white)](https://github.com/Majkey25/scrollit/releases/download/v1.0.0-beta.1/scrollit-v1.0.0-beta.1-debug.apk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Android%2014%2B-3DDC84?logo=android)](https://developer.android.com)
 [![Language](https://img.shields.io/badge/Language-Kotlin-7F52FF?logo=kotlin)](https://kotlinlang.org)
@@ -12,6 +14,15 @@ ScrollIt is a Kotlin Android app for internal use on Samsung phones. It provides
 <p align="center">
   <img src="docs/me.gif" alt="ScrollIt demo" width="340" />
 </p>
+
+## Download APK
+
+ScrollIt can now be downloaded directly from GitHub Releases.
+
+- Current GitHub prerelease: [ScrollIt v1.0.0-beta.1](https://github.com/Majkey25/scrollit/releases/tag/v1.0.0-beta.1)
+- Direct APK download: [scrollit-v1.0.0-beta.1-debug.apk](https://github.com/Majkey25/scrollit/releases/download/v1.0.0-beta.1/scrollit-v1.0.0-beta.1-debug.apk)
+- Published: April 5, 2026
+- Package: debug-signed APK for direct testing outside Google Play
 
 
 ## What the app does
@@ -59,27 +70,22 @@ cd /workspace/scrollit
 - Example absolute (Linux in this repo): `/workspace/scrollit/app/build/outputs/apk/debug/app-debug.apk`
 - Example absolute (Windows): `C:\Users\teply\Documents\scrollit\app\build\outputs\apk\debug\app-debug.apk`
 
-## GitHub release APK
+## GitHub Releases
 
 This repository now publishes installable APK files from GitHub tags that start with `v`.
 
-### Recommended first public tag
+### Current release
 
-- `v1.0.0-beta.1`
+1. GitHub release page: [v1.0.0-beta.1](https://github.com/Majkey25/scrollit/releases/tag/v1.0.0-beta.1)
+2. Downloaded asset name: `scrollit-v1.0.0-beta.1-debug.apk`
+3. Release channel: prerelease
 
-### What the workflow does
+### How new releases are published
 
-1. Runs `testDebugUnitTest`, `lintDebug`, and `assembleDebug`
-2. Renames the artifact to `scrollit-vX.Y.Z-debug.apk`
-3. Creates or updates the matching GitHub release
-4. Marks the release as a prerelease when the tag contains a suffix such as `-beta.1`
-
-### Real release flow
-
-1. Push the commit that contains `.github/workflows/release-apk.yml`
-2. Create a tag such as `v1.0.0-beta.1`
+1. Push the commit to `main`
+2. Create a tag such as `v1.0.0-beta.2` or `v1.0.0`
 3. Push the tag to GitHub
-4. Download the APK from the release Assets section
+4. GitHub Actions builds the APK and attaches it to the matching release
 
 ## USB install via ADB
 
