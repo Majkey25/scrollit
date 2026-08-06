@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="window_background">#0A0A0A</color>
+    <color name="surface">#141414</color>
+    <color name="border">#383834</color>
+    <color name="text_primary">#F7F7F5</color>
+    <color name="text_secondary">#AAA9A3</color>
+    <color name="control_primary">#F7F7F5</color>
+    <color name="control_on_primary">#0A0A0A</color>
+    <color name="control_secondary">#252523</color>
+    <color name="overlay_handle">@color/control_primary</color>
+    <color name="status_ok">@color/text_primary</color>
+    <color name="status_error">@color/text_secondary</color>
+</resources>

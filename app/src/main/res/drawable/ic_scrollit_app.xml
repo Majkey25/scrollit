@@ -2,7 +2,7 @@
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="18dp" />
-            <solid android:color="#155EEF" />
+            <solid android:color="@color/control_primary" />
         </shape>
     </item>
 
@@ -13,7 +13,7 @@
         android:top="18dp">
         <shape android:shape="rectangle">
             <corners android:radius="10dp" />
-            <solid android:color="#FFFFFF" />
+            <solid android:color="@color/control_on_primary" />
         </shape>
     </item>
 
@@ -24,7 +24,7 @@
         android:top="30dp">
         <shape android:shape="rectangle">
             <corners android:radius="3dp" />
-            <solid android:color="#155EEF" />
+            <solid android:color="@color/control_primary" />
         </shape>
     </item>
 
@@ -35,7 +35,7 @@
         android:top="42dp">
         <shape android:shape="rectangle">
             <corners android:radius="3dp" />
-            <solid android:color="#155EEF" />
+            <solid android:color="@color/control_primary" />
         </shape>
     </item>
 
@@ -46,7 +46,7 @@
         android:top="54dp">
         <shape android:shape="rectangle">
             <corners android:radius="3dp" />
-            <solid android:color="#155EEF" />
+            <solid android:color="@color/control_primary" />
         </shape>
     </item>
 
@@ -58,7 +58,7 @@
         <rotate android:fromDegrees="45">
             <shape android:shape="rectangle">
                 <corners android:radius="5dp" />
-                <solid android:color="#13B38B" />
+                <solid android:color="@color/control_primary" />
                 <size
                     android:width="14dp"
                     android:height="14dp" />
