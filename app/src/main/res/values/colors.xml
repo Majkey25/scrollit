@@ -8,7 +8,6 @@
     <color name="control_primary">#111111</color>
     <color name="control_on_primary">#FFFFFF</color>
     <color name="control_secondary">#EEEDEA</color>
-    <color name="overlay_handle">@color/control_primary</color>
     <color name="status_ok">@color/text_primary</color>
     <color name="status_error">@color/text_secondary</color>
 </resources>

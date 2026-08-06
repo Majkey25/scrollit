@@ -4,7 +4,7 @@
     <string name="accessibility_permission_needed">Enable the accessibility service before auto scroll will work.</string>
     <string name="accessibility_service_description">Performs repeated smooth drag gestures to move the current screen downward.</string>
     <string name="accessibility_service_label">ScrollIt Accessibility</string>
-    <string name="advanced_settings_title">Smooth tuning</string>
+    <string name="advanced_settings_title">Scroll tuning</string>
     <string name="app_name">ScrollIt</string>
     <string name="default_speed_number">8</string>
     <string name="distance_value">%1$d %% base drag distance</string>
@@ -13,18 +13,19 @@
     <string name="gesture_duration_label">Drag duration</string>
     <string name="hide_button">Hide</string>
     <string name="interval_value">%1$d ms pause after each drag</string>
-    <string name="launch_overlay">Launch floating overlay</string>
-    <string name="main_description">Floating auto-scroll tool for Samsung phones. ScrollIt now uses a smooth-only scrolling engine with longer, smaller drags so the page moves downward more gently.</string>
+    <string name="launch_overlay">Open floating controls</string>
+    <string name="main_description">A small floating control for hands-free scrolling.</string>
     <string name="notification_channel_name">Overlay service</string>
     <string name="notification_text">Floating auto-scroll overlay is active.</string>
     <string name="notification_title">ScrollIt running</string>
-    <string name="open_accessibility_settings">Open accessibility settings</string>
-    <string name="open_overlay_settings">Open overlay permission settings</string>
+    <string name="open_accessibility_settings">Accessibility settings</string>
+    <string name="open_overlay_settings">Overlay permission</string>
+    <string name="open_overlay_controls">Open ScrollIt controls</string>
     <string name="overlay_accessibility_missing">Accessibility service is missing.</string>
     <string name="overlay_accessibility_not_connected">Accessibility service is enabled, but Android has not connected it yet. Toggle it off and on if needed.</string>
     <string name="overlay_accessibility_ready">Accessibility service is enabled.</string>
-    <string name="overlay_bubble_label">Open</string>
-    <string name="overlay_drag_title">Drag</string>
+    <string name="overlay_bubble_label">S</string>
+    <string name="overlay_drag_title">SCROLLIT · DRAG</string>
     <string name="overlay_gesture_failed">Gesture dispatch failed on this screen. Try another app or screen.</string>
     <string name="overlay_idle">Ready.</string>
     <string name="overlay_permission_label">Draw over other apps</string>
@@ -32,15 +33,15 @@
     <string name="overlay_running">Running at speed %1$d</string>
     <string name="overlay_stopped">Stopped.</string>
     <string name="permission_enabled">Enabled</string>
-    <string name="permission_help">Required permissions:
-1. Draw over other apps lets the floating controller appear above websites and browser pages.
-2. Accessibility service lets the app send repeated drag gestures for downward scrolling.
-If either permission is missing, Start will show a clear error and scrolling will not run silently.</string>
+    <string name="permission_help">Allow display over other apps, then enable ScrollIt Accessibility. Both are required to start scrolling.</string>
     <string name="permission_missing">Needs action</string>
     <string name="scroll_distance_label">Drag distance</string>
     <string name="scroll_interval_label">Pause between drags</string>
-    <string name="smooth_mode_only">Mode is fixed to Smooth. Use the controls below to make the movement gentler or faster for your phone and browser.</string>
+    <string name="smooth_mode_only">Fine-tune how each scroll feels.</string>
+    <string name="decrease_speed">Decrease scroll speed</string>
+    <string name="increase_speed">Increase scroll speed</string>
+    <string name="setup_title">Setup</string>
     <string name="start_button">Start</string>
-    <string name="status_header">Permission status</string>
+    <string name="status_header">Permissions</string>
     <string name="stop_button">Stop</string>
 </resources>

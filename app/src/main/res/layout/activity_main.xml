@@ -2,202 +2,240 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/window_background"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="24dp">
 
         <TextView
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
-            android:textAppearance="?attr/textAppearanceHeadlineMedium"
             android:textColor="@color/text_primary"
+            android:textSize="34sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/subtitleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="6dp"
             android:lineSpacingExtra="2dp"
             android:text="@string/main_description"
             android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="@color/text_secondary" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="@string/status_header"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/bg_overlay_panel"
-            android:orientation="vertical"
-            android:padding="18dp">
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/status_header"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_weight="1"
                 android:text="@string/overlay_permission_label"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
+                android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/overlayStatusValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:accessibilityLiveRegion="polite"
                 android:text="@string/permission_missing"
                 android:textColor="@color/status_error"
-                android:textSize="16sp"
                 android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_weight="1"
                 android:text="@string/accessibility_permission_label"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
+                android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/accessibilityStatusValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:accessibilityLiveRegion="polite"
                 android:text="@string/permission_missing"
                 android:textColor="@color/status_error"
-                android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/openOverlaySettingsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:minHeight="52dp"
-            android:text="@string/open_overlay_settings"
-            android:textAllCaps="false" />
-
-        <Button
-            android:id="@+id/openAccessibilitySettingsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:minHeight="52dp"
-            android:text="@string/open_accessibility_settings"
-            android:textAllCaps="false" />
-
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/launchOverlayButton"
+            style="@style/Widget.ScrollIt.Button.Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="16dp"
             android:minHeight="52dp"
-            android:text="@string/launch_overlay"
-            android:textAllCaps="false" />
+            android:text="@string/launch_overlay" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/openOverlaySettingsButton"
+            style="@style/Widget.ScrollIt.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/open_overlay_settings" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/openAccessibilitySettingsButton"
+            style="@style/Widget.ScrollIt.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/open_accessibility_settings" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="24dp"
+            android:background="@color/border" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/advanced_settings_title"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/smooth_mode_only"
+            android:textColor="@color/text_secondary" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/bg_overlay_panel"
-            android:orientation="vertical"
-            android:padding="18dp">
+            android:layout_marginTop="18dp"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/advanced_settings_title"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/smooth_mode_only"
-                android:textColor="@color/text_secondary" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_weight="1"
+                android:labelFor="@id/distanceSeekBar"
                 android:text="@string/scroll_distance_label"
                 android:textColor="@color/text_primary"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/distanceValueText"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_secondary" />
+        </LinearLayout>
 
-            <SeekBar
-                android:id="@+id/distanceSeekBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+        <SeekBar
+            android:id="@+id/distanceSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:labelFor="@id/intervalSeekBar"
                 android:text="@string/scroll_interval_label"
                 android:textColor="@color/text_primary"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/intervalValueText"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_secondary" />
+        </LinearLayout>
 
-            <SeekBar
-                android:id="@+id/intervalSeekBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+        <SeekBar
+            android:id="@+id/intervalSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:labelFor="@id/durationSeekBar"
                 android:text="@string/gesture_duration_label"
                 android:textColor="@color/text_primary"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/durationValueText"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_secondary" />
-
-            <SeekBar
-                android:id="@+id/durationSeekBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
         </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/durationSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="24dp"
+            android:background="@color/border" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setup_title"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/permissionHelpText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/bg_overlay_panel"
+            android:layout_marginTop="8dp"
             android:lineSpacingExtra="2dp"
-            android:padding="18dp"
             android:text="@string/permission_help"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="@color/text_secondary" />
