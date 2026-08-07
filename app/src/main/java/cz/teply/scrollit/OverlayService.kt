@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.os.IBinder
@@ -96,6 +97,7 @@ class OverlayService : Service() {
         expandedView?.let { view ->
             if (!view.isAttachedToWindow) {
                 windowManager.addView(view, params)
+                animateOverlayIn(view)
             }
         }
 
@@ -128,7 +130,7 @@ class OverlayService : Service() {
             } else {
                 startAutoScroll()
             }
-            renderRunningState()
+            renderRunningState(animate = true)
         }
 
         view.findViewById<Button>(R.id.hideButton).setOnClickListener {
@@ -145,11 +147,37 @@ class OverlayService : Service() {
         view.findViewById<TextView>(R.id.speedValueText).text = selectedSpeedLevel.toString()
     }
 
-    private fun renderRunningState() {
+    private fun renderRunningState(animate: Boolean = false) {
         val view = expandedView ?: return
         val running = ScrollAccessibilityService.instance?.isAutoScrollRunning() == true
         val button = view.findViewById<Button>(R.id.startStopButton)
-        button.text = getString(if (running) R.string.stop_button else R.string.start_button)
+        button.animate().cancel()
+
+        if (animate) {
+            val halfDuration = ScrollConfig.controlAnimationDurationMs / 2
+            button.animate()
+                .alpha(0.55f)
+                .setDuration(halfDuration)
+                .withEndAction {
+                    button.text = getString(if (running) R.string.stop_button else R.string.start_button)
+                    button.backgroundTintList = ColorStateList.valueOf(
+                        getColor(if (running) R.color.control_on_primary else R.color.control_primary),
+                    )
+                    button.setTextColor(getColor(if (running) R.color.control_primary else R.color.control_on_primary))
+                    button.animate()
+                        .alpha(1f)
+                        .setDuration(halfDuration)
+                        .start()
+                }
+                .start()
+        } else {
+            button.alpha = 1f
+            button.text = getString(if (running) R.string.stop_button else R.string.start_button)
+            button.backgroundTintList = ColorStateList.valueOf(
+                getColor(if (running) R.color.control_on_primary else R.color.control_primary),
+            )
+            button.setTextColor(getColor(if (running) R.color.control_primary else R.color.control_on_primary))
+        }
 
         if (running) {
             updateActionStatus(getString(R.string.overlay_running, selectedSpeedLevel), isError = false)
@@ -187,7 +215,20 @@ class OverlayService : Service() {
 
         if (!bubble.isAttachedToWindow) {
             windowManager.addView(bubble, bubbleLayoutParams)
+            animateOverlayIn(bubble)
         }
+    }
+
+    private fun animateOverlayIn(view: View) {
+        view.alpha = 0f
+        view.scaleX = 0.94f
+        view.scaleY = 0.94f
+        view.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(ScrollConfig.overlayAnimationDurationMs)
+            .start()
     }
 
     private fun createDragTouchListener(isBubble: Boolean): View.OnTouchListener {
