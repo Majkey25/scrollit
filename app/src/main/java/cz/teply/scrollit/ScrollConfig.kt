@@ -1,8 +1,8 @@
 package cz.teply.scrollit
 
 object ScrollConfig {
-    const val bubbleHeightDp = 92
-    const val bubbleWidthDp = 56
+    const val bubbleHeightDp = 48
+    const val bubbleWidthDp = 48
     const val expandedEstimatedHeightDp = 232
     const val expandedWidthDp = 272
     const val gestureXFraction = 0.5f
