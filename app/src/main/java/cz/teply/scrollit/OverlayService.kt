@@ -10,6 +10,7 @@ import android.content.res.ColorStateList
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.os.IBinder
+import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -423,8 +424,9 @@ class OverlayService : Service() {
     }
 
     private fun inflateOverlayLayout(layoutResId: Int): View {
-        val parent = FrameLayout(this)
-        return LayoutInflater.from(this).inflate(layoutResId, parent, false)
+        val themedContext = ContextThemeWrapper(this, R.style.Theme_ScrollIt)
+        val parent = FrameLayout(themedContext)
+        return LayoutInflater.from(themedContext).inflate(layoutResId, parent, false)
     }
 
     private fun removeOverlay(view: View?) {

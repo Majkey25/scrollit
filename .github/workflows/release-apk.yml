@@ -71,6 +71,7 @@ jobs:
           - Monochrome light and dark themes
           - Compact floating controller with a 48 dp edge bubble
           - Restrained panel, bubble, and Start/Stop transitions
+          - Fix floating controls startup crash
           - Debug-signed APK for manual installation
           EOF
 
