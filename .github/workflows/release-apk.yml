@@ -66,11 +66,12 @@ jobs:
           mkdir -p dist
           cp app/build/outputs/apk/debug/app-debug.apk "dist/${{ steps.meta.outputs.apk_name }}"
           cat <<'EOF' > dist/release-notes.md
-          First public GitHub APK build for ScrollIt.
+          ScrollIt monochrome interface update.
 
-          - APK: debug-signed build for manual installation
-          - Install: download the APK from Assets and open it on your Android device
-          - Channel: GitHub prerelease when the tag contains a suffix such as -beta.1
+          - Monochrome light and dark themes
+          - Compact floating controller with a 48 dp edge bubble
+          - Restrained panel, bubble, and Start/Stop transitions
+          - Debug-signed APK for manual installation
           EOF
 
       - name: Publish GitHub release
