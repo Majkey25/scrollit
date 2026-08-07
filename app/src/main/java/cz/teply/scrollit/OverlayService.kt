@@ -80,6 +80,7 @@ class OverlayService : Service() {
             expandedView = inflateOverlayLayout(R.layout.overlay_controls).also(::bindExpandedOverlay)
         }
 
+        val view = expandedView ?: return
         val params = expandedParams ?: createExpandedParams().also { expandedParams = it }
         params.x = OverlayPositioning.clampX(
             lastExpandedX ?: params.x,
@@ -90,15 +91,13 @@ class OverlayService : Service() {
         params.y = OverlayPositioning.clampY(
             lastExpandedY ?: params.y,
             screenSize().y,
-            dp(ScrollConfig.expandedEstimatedHeightDp),
+            expandedOverlayHeight(view),
             dp(ScrollConfig.overlayMarginDp),
         )
 
-        expandedView?.let { view ->
-            if (!view.isAttachedToWindow) {
-                windowManager.addView(view, params)
-                animateOverlayIn(view)
-            }
+        if (!view.isAttachedToWindow) {
+            windowManager.addView(view, params)
+            animateOverlayIn(view)
         }
 
         refreshPermissionStatus()
@@ -107,6 +106,23 @@ class OverlayService : Service() {
     }
 
     private fun bindExpandedOverlay(view: View) {
+        view.addOnLayoutChangeListener { target, _, top, _, bottom, _, oldTop, _, oldBottom ->
+            val height = bottom - top
+            if (height <= 0 || height == oldBottom - oldTop || !target.isAttachedToWindow) {
+                return@addOnLayoutChangeListener
+            }
+            val params = expandedParams ?: return@addOnLayoutChangeListener
+            val clampedY = OverlayPositioning.clampY(
+                params.y,
+                screenSize().y,
+                height,
+                dp(ScrollConfig.overlayMarginDp),
+            )
+            if (clampedY != params.y) {
+                params.y = clampedY
+                windowManager.updateViewLayout(target, params)
+            }
+        }
         view.findViewById<View>(R.id.overlayDragHandle).setOnTouchListener(createDragTouchListener(isBubble = false))
 
         view.findViewById<Button>(R.id.speedMinusButton).setOnClickListener {
@@ -262,7 +278,7 @@ class OverlayService : Service() {
                     dragging = dragging || kotlin.math.abs(deltaX) > touchSlop || kotlin.math.abs(deltaY) > touchSlop
                     val screen = screenSize()
                     val width = if (isBubble) params.width else dp(ScrollConfig.expandedWidthDp)
-                    val height = if (isBubble) params.height else dp(ScrollConfig.expandedEstimatedHeightDp)
+                    val height = if (isBubble) params.height else expandedOverlayHeight(target)
                     params.x = OverlayPositioning.clampX(startX + deltaX, screen.x, width, dp(ScrollConfig.overlayMarginDp))
                     params.y = OverlayPositioning.clampY(startY + deltaY, screen.y, height, dp(ScrollConfig.overlayMarginDp))
                     windowManager.updateViewLayout(target, params)
@@ -429,6 +445,9 @@ class OverlayService : Service() {
     }
 
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
+
+    private fun expandedOverlayHeight(view: View): Int =
+        view.height.takeIf { it > 0 } ?: dp(ScrollConfig.expandedEstimatedHeightDp)
 
     companion object {
         const val ACTION_EXIT = "cz.teply.scrollit.action.EXIT"
