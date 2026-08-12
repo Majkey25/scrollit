@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         advancedSettingsContent = findViewById(R.id.advancedSettingsContent)
         modeToggleGroup = findViewById(R.id.modeToggleGroup)
 
-        ShizukuWheelScrollEngine.initialize(applicationContext)
+        ShizukuAutoScrollEngine.initialize(applicationContext)
         bindModeControls()
         bindSettingsControls()
 
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        ShizukuWheelScrollEngine.addStateListener(shizukuStateListener)
+        ShizukuAutoScrollEngine.addStateListener(shizukuStateListener)
     }
 
     override fun onResume() {
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        ShizukuWheelScrollEngine.removeStateListener(shizukuStateListener)
+        ShizukuAutoScrollEngine.removeStateListener(shizukuStateListener)
         super.onStop()
     }
 
@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
             val settings = ScrollSettingsStore.load(this).copy(mode = mode)
             ScrollSettingsStore.save(this, settings)
             ScrollAccessibilityService.instance?.stopAutoScroll()
-            ShizukuWheelScrollEngine.stop()
+            ShizukuAutoScrollEngine.stop()
             OverlayService.refreshIfRunning()
             refreshPermissionStatus()
         }
@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity() {
         updateSettingsValueLabels(settings)
         ScrollAccessibilityService.instance?.updateSettings(settings)
         ScrollAccessibilityService.instance?.updateSpeedLevel(settings.speedLevel)
-        ShizukuWheelScrollEngine.updateSpeedLevel(settings.speedLevel)
+        ShizukuAutoScrollEngine.updateSpeedLevel(settings.speedLevel)
         OverlayService.refreshIfRunning()
     }
 
@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
         val overlayEnabled = PermissionState.hasOverlayPermission(this)
         val dependencyEnabled = when (mode) {
             ScrollMode.TOUCH -> PermissionState.isAccessibilityEnabled(this)
-            ScrollMode.AUTO_SCROLL -> ShizukuWheelScrollEngine.prepare(this) == ShizukuState.READY
+            ScrollMode.AUTO_SCROLL -> ShizukuAutoScrollEngine.prepare(this) == ShizukuState.READY
         }
         val ready = overlayEnabled && dependencyEnabled
 
@@ -260,9 +260,9 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        when (val state = ShizukuWheelScrollEngine.prepare(this)) {
+        when (val state = ShizukuAutoScrollEngine.prepare(this)) {
             ShizukuState.PERMISSION_REQUIRED -> {
-                if (!ShizukuWheelScrollEngine.requestPermission(this)) {
+                if (!ShizukuAutoScrollEngine.requestPermission(this)) {
                     openShizukuManager()
                 }
             }
@@ -316,7 +316,7 @@ class MainActivity : AppCompatActivity() {
         if (mode == ScrollMode.TOUCH && !PermissionState.isAccessibilityEnabled(this)) {
             Toast.makeText(this, R.string.accessibility_permission_needed, Toast.LENGTH_LONG).show()
         } else if (mode == ScrollMode.AUTO_SCROLL) {
-            val shizukuState = ShizukuWheelScrollEngine.prepare(this)
+            val shizukuState = ShizukuAutoScrollEngine.prepare(this)
             if (shizukuState != ShizukuState.READY) {
                 Toast.makeText(this, shizukuMessage(shizukuState), Toast.LENGTH_LONG).show()
             }
