@@ -19,24 +19,25 @@ enum class ShizukuState {
     UNSUPPORTED,
 }
 
-sealed interface WheelStartResult {
-    data object Started : WheelStartResult
-    data class Unavailable(val state: ShizukuState) : WheelStartResult
-    data object InjectionFailed : WheelStartResult
+sealed interface ShizukuStartResult {
+    data object Started : ShizukuStartResult
+    data class Unavailable(val state: ShizukuState) : ShizukuStartResult
+    data object InjectionFailed : ShizukuStartResult
 }
 
-object ShizukuWheelScrollEngine {
+object ShizukuAutoScrollEngine {
     private const val REQUEST_CODE = 41
 
     private val mainHandler = Handler(android.os.Looper.getMainLooper())
-    private val workerThread = HandlerThread("ScrollItWheel").apply { start() }
+    private val workerThread = HandlerThread("ScrollItShizuku").apply { start() }
     private val workerHandler = Handler(workerThread.looper)
+    private val touchLock = Any()
     private val listeners = CopyOnWriteArraySet<() -> Unit>()
     private lateinit var userServiceArgs: Shizuku.UserServiceArgs
     private var initialized = false
 
     @Volatile
-    private var service: IWheelInputService? = null
+    private var service: IShizukuInputService? = null
 
     @Volatile
     private var binding = false
@@ -47,11 +48,9 @@ object ShizukuWheelScrollEngine {
     @Volatile
     private var speedLevel = ScrollSpeed.DEFAULT_LEVEL
 
-    @Volatile
-    private var scrollX = 0f
-
-    @Volatile
-    private var scrollY = 0f
+    private var touchX = 0f
+    private var touchStartY = 0f
+    private var touchPath: ContinuousTouchPath? = null
 
     private val binderReceivedListener = Shizuku.OnBinderReceivedListener {
         bindIfAllowed()
@@ -71,7 +70,7 @@ object ShizukuWheelScrollEngine {
     }
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, binder: IBinder?) {
-            service = binder?.takeIf(IBinder::pingBinder)?.let(IWheelInputService.Stub::asInterface)
+            service = binder?.takeIf(IBinder::pingBinder)?.let(IShizukuInputService.Stub::asInterface)
             binding = false
             notifyStateChanged()
         }
@@ -83,25 +82,39 @@ object ShizukuWheelScrollEngine {
             notifyStateChanged()
         }
     }
-    private val scrollTick = object : Runnable {
+    private val touchTick = object : Runnable {
         override fun run() {
-            if (!running) {
-                return
+            synchronized(touchLock) {
+                if (!running) {
+                    return
+                }
+                val currentService = service
+                val path = touchPath
+                val profile = TouchScrollProfileFactory.create(speedLevel)
+                val nextY = path?.nextY(profile.distancePerTickPx)
+                val injected = try {
+                    when {
+                        currentService == null || path == null -> false
+                        nextY != null -> currentService.moveTouch(touchX, nextY)
+                        !currentService.finishTouch() -> false
+                        else -> {
+                            path.restart()
+                            currentService.startTouch(touchX, touchStartY)
+                        }
+                    }
+                } catch (_: Exception) {
+                    false
+                }
+                if (!injected) {
+                    runCatching { currentService?.finishTouch() }
+                    service = currentService?.takeIf { it.asBinder().isBinderAlive }
+                    running = false
+                    touchPath = null
+                    notifyStateChanged()
+                    return
+                }
+                workerHandler.postDelayed(this, profile.frameIntervalMs)
             }
-            val currentService = service
-            val profile = WheelScrollProfileFactory.create(speedLevel)
-            val injected = try {
-                currentService?.scroll(profile.verticalAxisValue, scrollX, scrollY) == true
-            } catch (_: Exception) {
-                false
-            }
-            if (!injected) {
-                service = currentService?.takeIf { it.asBinder().isBinderAlive }
-                running = false
-                notifyStateChanged()
-                return
-            }
-            workerHandler.postDelayed(this, profile.frameIntervalMs)
         }
     }
 
@@ -111,10 +124,10 @@ object ShizukuWheelScrollEngine {
             return
         }
         userServiceArgs = Shizuku.UserServiceArgs(
-            ComponentName(context.packageName, WheelInputUserService::class.java.name),
+            ComponentName(context.packageName, ShizukuInputUserService::class.java.name),
         )
             .daemon(false)
-            .processNameSuffix("wheel")
+            .processNameSuffix("input")
             .debuggable(BuildConfig.DEBUG)
             .version(BuildConfig.VERSION_CODE)
         Shizuku.addBinderReceivedListenerSticky(binderReceivedListener)
@@ -176,30 +189,42 @@ object ShizukuWheelScrollEngine {
         }
     }
 
-    fun start(context: Context, level: Int, x: Float, y: Float): WheelStartResult {
+    fun start(
+        context: Context,
+        level: Int,
+        x: Float,
+        startY: Float,
+        endY: Float,
+    ): ShizukuStartResult {
         val currentState = prepare(context)
         if (currentState != ShizukuState.READY) {
-            return WheelStartResult.Unavailable(currentState)
+            return ShizukuStartResult.Unavailable(currentState)
         }
-        val currentService = service ?: return WheelStartResult.Unavailable(ShizukuState.CONNECTING)
-        val profile = WheelScrollProfileFactory.create(level)
-        val injected = try {
-            currentService.scroll(profile.verticalAxisValue, x, y)
-        } catch (_: Exception) {
-            false
-        }
-        if (!injected) {
-            return WheelStartResult.InjectionFailed
-        }
+        val currentService = service ?: return ShizukuStartResult.Unavailable(ShizukuState.CONNECTING)
+        synchronized(touchLock) {
+            val path = ContinuousTouchPath(startY, endY)
+            val injected = try {
+                currentService.startTouch(x, startY)
+            } catch (_: Exception) {
+                false
+            }
+            if (!injected) {
+                return ShizukuStartResult.InjectionFailed
+            }
 
-        speedLevel = ScrollSpeed.clamp(level)
-        scrollX = x
-        scrollY = y
-        running = true
-        workerHandler.removeCallbacks(scrollTick)
-        workerHandler.postDelayed(scrollTick, profile.frameIntervalMs)
-        notifyStateChanged()
-        return WheelStartResult.Started
+            speedLevel = ScrollSpeed.clamp(level)
+            touchX = x
+            touchStartY = startY
+            touchPath = path
+            running = true
+            workerHandler.removeCallbacks(touchTick)
+            workerHandler.postDelayed(
+                touchTick,
+                TouchScrollProfileFactory.create(speedLevel).frameIntervalMs,
+            )
+            notifyStateChanged()
+            return ShizukuStartResult.Started
+        }
     }
 
     fun updateSpeedLevel(level: Int) {
@@ -209,11 +234,15 @@ object ShizukuWheelScrollEngine {
     fun isRunning(): Boolean = running
 
     fun stop() {
-        val wasRunning = running
-        running = false
-        workerHandler.removeCallbacks(scrollTick)
-        if (wasRunning) {
-            notifyStateChanged()
+        synchronized(touchLock) {
+            val wasRunning = running
+            running = false
+            workerHandler.removeCallbacks(touchTick)
+            if (wasRunning) {
+                runCatching { service?.finishTouch() }
+                touchPath = null
+                notifyStateChanged()
+            }
         }
     }
 

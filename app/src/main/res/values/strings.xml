@@ -21,7 +21,7 @@
     <string name="main_state_setup">Setup required</string>
     <string name="main_state_setup_description">Turn on the missing permissions below.</string>
     <string name="mode_auto_scroll">AutoScroll</string>
-    <string name="mode_auto_scroll_explanation">AutoScroll sends smooth mouse-wheel events. It requires Shizuku.</string>
+    <string name="mode_auto_scroll_explanation">AutoScroll sends a continuous touch stream. It requires Shizuku.</string>
     <string name="mode_touch">Touch</string>
     <string name="mode_touch_explanation">Touch simulates a finger swipe. It works without Shizuku.</string>
     <string name="mode_title">Scroll mode</string>
@@ -40,7 +40,7 @@
     <string name="overlay_drag_title">SCROLLIT · DRAG</string>
     <string name="overlay_gesture_failed">This screen rejected auto-scroll.</string>
     <string name="overlay_idle">Ready</string>
-    <string name="overlay_injection_failed">Android rejected the wheel event. AutoScroll stopped.</string>
+    <string name="overlay_injection_failed">Android rejected the touch stream. AutoScroll stopped.</string>
     <string name="overlay_permission_label">Floating controls</string>
     <string name="overlay_permission_needed">Allow floating controls before opening the overlay.</string>
     <string name="overlay_running">Scrolling · %1$d</string>

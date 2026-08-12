@@ -69,7 +69,8 @@ jobs:
           ScrollIt AutoScroll update.
 
           - Touch remains the default and works without Shizuku
-          - AutoScroll injects small native mouse-wheel events through Shizuku
+          - AutoScroll injects a continuous touch stream through Shizuku
+          - Verified with Ultimate Guitar Tabs 7.3.22
           - 30 slow speed levels work in both modes
           - Clear red status when the selected backend is unavailable
           - Shizuku setup guide in the README
