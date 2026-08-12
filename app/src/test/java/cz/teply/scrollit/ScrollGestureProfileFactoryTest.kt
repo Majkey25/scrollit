@@ -6,23 +6,26 @@ import org.junit.Test
 
 class ScrollGestureProfileFactoryTest {
     @Test
-    fun levelOne_profileStaysSlowButAvoidsVisiblePauses() {
+    fun levelOne_addsAUsefulRangeBelowThePreviousMinimum() {
         val profile = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 1)
         val distance = profile.startYFraction - profile.endYFraction
 
-        assertTrue(profile.gestureDurationMs >= 1400L)
-        assertTrue(profile.intervalMs <= 32L)
-        assertEquals(ScrollConfig.minGestureDistanceFraction, distance, 0.0001f)
+        assertTrue(profile.gestureDurationMs in 1900L..2000L)
+        assertTrue(profile.intervalMs in 40L..50L)
+        assertEquals(0.009f, distance, 0.0001f)
     }
 
     @Test
-    fun defaultProfile_usesANearContinuousGap() {
+    fun levelFifteen_matchesThePreviousLevelOnePace() {
         val profile = ScrollGestureProfileFactory.create(
             ScrollSettings.defaults,
             ScrollSpeed.DEFAULT_LEVEL,
         )
+        val distance = profile.startYFraction - profile.endYFraction
 
-        assertTrue(profile.intervalMs in 4L..24L)
+        assertEquals(1440L, profile.gestureDurationMs)
+        assertEquals(31L, profile.intervalMs)
+        assertEquals(0.035f, distance, 0.0001f)
     }
 
     @Test

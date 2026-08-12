@@ -5,12 +5,12 @@ object ScrollSpeed {
     const val MAX_LEVEL = 30
     const val DEFAULT_LEVEL = 15
 
-    private const val SLOWEST_INTERVAL_FACTOR = 0.35f
-    private const val FASTEST_INTERVAL_FACTOR = 0.05f
-    private const val SLOWEST_DISTANCE_FACTOR = 0.35f
-    private const val FASTEST_DISTANCE_FACTOR = 1.25f
-    private const val SLOWEST_DURATION_FACTOR = 1.6f
-    private const val FASTEST_DURATION_FACTOR = 0.45f
+    private const val SLOWEST_INTERVAL_FACTOR = 0.50f
+    private const val FASTEST_INTERVAL_FACTOR = 0.19f
+    private const val SLOWEST_DISTANCE_FACTOR = 0.10f
+    private const val FASTEST_DISTANCE_FACTOR = 0.70f
+    private const val SLOWEST_DURATION_FACTOR = 2.16f
+    private const val FASTEST_DURATION_FACTOR = 1.00f
 
     fun clamp(level: Int): Int = level.coerceIn(MIN_LEVEL, MAX_LEVEL)
 

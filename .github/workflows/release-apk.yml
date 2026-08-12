@@ -68,8 +68,8 @@ jobs:
           cat <<'EOF' > dist/release-notes.md
           ScrollIt smooth scrolling update.
 
-          - Near-continuous batched scrolling with shorter gaps
-          - 30 persistent speed levels
+          - Near-continuous batched scrolling
+          - 30 slower speed levels; level 15 matches the previous minimum
           - Compact main screen inspired by ScanIt
           - Accessibility warning only when scrolling cannot work
           - Debug-signed APK for manual installation
