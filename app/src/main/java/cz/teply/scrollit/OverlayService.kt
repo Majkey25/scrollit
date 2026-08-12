@@ -30,12 +30,25 @@ class OverlayService : Service() {
     private var expandedParams: WindowManager.LayoutParams? = null
     private var bubbleParams: WindowManager.LayoutParams? = null
     private var selectedSpeedLevel = ScrollSpeed.DEFAULT_LEVEL
+    private var selectedMode = ScrollMode.TOUCH
+    private var activeMode: ScrollMode? = null
     private var lastExpandedX: Int? = null
     private var lastExpandedY: Int? = null
+    private val shizukuStateListener: () -> Unit = {
+        if (activeMode == ScrollMode.AUTO_SCROLL && !ShizukuWheelScrollEngine.isRunning()) {
+            activeMode = null
+            updateActionStatus(getString(R.string.overlay_injection_failed), isError = true)
+        }
+        refreshPermissionStatus()
+        renderRunningState()
+    }
 
     override fun onCreate() {
         super.onCreate()
+        runningInstance = this
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+        ShizukuWheelScrollEngine.initialize(applicationContext)
+        ShizukuWheelScrollEngine.addStateListener(shizukuStateListener)
         createNotificationChannel()
         startForeground(ScrollConfig.notificationId, buildNotification())
     }
@@ -52,20 +65,36 @@ class OverlayService : Service() {
             return START_NOT_STICKY
         }
 
-        selectedSpeedLevel = ScrollSettingsStore.load(this).speedLevel
-        ScrollAccessibilityService.instance?.updateSpeedLevel(selectedSpeedLevel)
+        refreshStoredSettings()
         if (expandedView == null && bubbleView == null) {
             showExpandedOverlay()
-        } else {
-            refreshPermissionStatus()
-            renderSpeedLevel()
-            renderRunningState()
         }
 
         return START_NOT_STICKY
     }
 
+    private fun refreshStoredSettings() {
+        val settings = ScrollSettingsStore.load(this)
+        if (activeMode != null && activeMode != settings.mode) {
+            stopAutoScroll()
+        }
+        selectedSpeedLevel = settings.speedLevel
+        selectedMode = settings.mode
+        ScrollAccessibilityService.instance?.updateSpeedLevel(selectedSpeedLevel)
+        ShizukuWheelScrollEngine.updateSpeedLevel(selectedSpeedLevel)
+        if (expandedView == null && bubbleView == null) {
+            return
+        }
+        refreshPermissionStatus()
+        renderSpeedLevel()
+        renderRunningState()
+    }
+
     override fun onDestroy() {
+        if (runningInstance === this) {
+            runningInstance = null
+        }
+        ShizukuWheelScrollEngine.removeStateListener(shizukuStateListener)
         stopAutoScroll()
         removeOverlay(expandedView)
         removeOverlay(bubbleView)
@@ -138,7 +167,7 @@ class OverlayService : Service() {
         }
 
         view.findViewById<Button>(R.id.startStopButton).setOnClickListener {
-            if (ScrollAccessibilityService.instance?.isAutoScrollRunning() == true) {
+            if (isAutoScrollRunning()) {
                 stopAutoScroll()
                 updateActionStatus(getString(R.string.overlay_stopped), isError = false)
             } else {
@@ -163,7 +192,7 @@ class OverlayService : Service() {
 
     private fun renderRunningState(animate: Boolean = false) {
         val view = expandedView ?: return
-        val running = ScrollAccessibilityService.instance?.isAutoScrollRunning() == true
+        val running = isAutoScrollRunning()
         val button = view.findViewById<Button>(R.id.startStopButton)
         button.animate().cancel()
 
@@ -238,6 +267,7 @@ class OverlayService : Service() {
         val settings = ScrollSettingsStore.load(this).copy(speedLevel = selectedSpeedLevel)
         ScrollSettingsStore.save(this, settings)
         ScrollAccessibilityService.instance?.updateSpeedLevel(selectedSpeedLevel)
+        ShizukuWheelScrollEngine.updateSpeedLevel(selectedSpeedLevel)
         renderSpeedLevel()
         renderRunningState()
     }
@@ -314,7 +344,17 @@ class OverlayService : Service() {
     }
 
     private fun startAutoScroll() {
+        val storedMode = ScrollSettingsStore.load(this).mode
+        if (storedMode != selectedMode) {
+            stopAutoScroll()
+            selectedMode = storedMode
+        }
         refreshPermissionStatus()
+        if (selectedMode == ScrollMode.AUTO_SCROLL) {
+            startWheelAutoScroll()
+            return
+        }
+
         if (!PermissionState.isAccessibilityEnabled(this)) {
             val message = getString(R.string.overlay_accessibility_missing)
             updateActionStatus(message, isError = true)
@@ -332,10 +372,13 @@ class OverlayService : Service() {
 
         val settings = ScrollSettingsStore.load(this)
         when (val result = service.startAutoScroll(selectedSpeedLevel, settings)) {
-            AutoScrollResult.Started -> updateActionStatus(
-                getString(R.string.overlay_running, selectedSpeedLevel),
-                isError = false,
-            )
+            AutoScrollResult.Started -> {
+                activeMode = ScrollMode.TOUCH
+                updateActionStatus(
+                    getString(R.string.overlay_running, selectedSpeedLevel),
+                    isError = false,
+                )
+            }
 
             is AutoScrollResult.Failed -> {
                 updateActionStatus(result.message, isError = true)
@@ -344,23 +387,89 @@ class OverlayService : Service() {
         }
     }
 
+    private fun startWheelAutoScroll() {
+        val screen = screenSize()
+        when (
+            val result = ShizukuWheelScrollEngine.start(
+                this,
+                selectedSpeedLevel,
+                screen.x / 2f,
+                screen.y / 2f,
+            )
+        ) {
+            WheelStartResult.Started -> {
+                activeMode = ScrollMode.AUTO_SCROLL
+                updateActionStatus(
+                    getString(R.string.overlay_running, selectedSpeedLevel),
+                    isError = false,
+                )
+            }
+
+            WheelStartResult.InjectionFailed -> showStartError(
+                getString(R.string.overlay_injection_failed),
+            )
+
+            is WheelStartResult.Unavailable -> showStartError(
+                getString(shizukuStatusMessage(result.state)),
+            )
+        }
+    }
+
+    private fun showStartError(message: String) {
+        activeMode = null
+        updateActionStatus(message, isError = true)
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
     private fun stopAutoScroll() {
         ScrollAccessibilityService.instance?.stopAutoScroll()
+        ShizukuWheelScrollEngine.stop()
+        activeMode = null
+    }
+
+    private fun isAutoScrollRunning(): Boolean = when (activeMode) {
+        ScrollMode.TOUCH -> ScrollAccessibilityService.instance?.isAutoScrollRunning() == true
+        ScrollMode.AUTO_SCROLL -> ShizukuWheelScrollEngine.isRunning()
+        null -> false
     }
 
     private fun refreshPermissionStatus() {
         val view = expandedView ?: return
         val permissionStatus = view.findViewById<TextView>(R.id.permissionStatusText)
         val actionStatus = view.findViewById<TextView>(R.id.actionStatusText)
-        val enabled = PermissionState.isAccessibilityEnabled(this)
+        view.findViewById<TextView>(R.id.overlayDragHandle).setText(
+            if (selectedMode == ScrollMode.TOUCH) {
+                R.string.overlay_mode_touch
+            } else {
+                R.string.overlay_mode_auto_scroll
+            },
+        )
+        val shizukuState = if (selectedMode == ScrollMode.AUTO_SCROLL) {
+            ShizukuWheelScrollEngine.prepare(this)
+        } else {
+            null
+        }
+        val enabled = when (selectedMode) {
+            ScrollMode.TOUCH -> PermissionState.isAccessibilityEnabled(this)
+            ScrollMode.AUTO_SCROLL -> shizukuState == ShizukuState.READY
+        }
         permissionStatus.isVisible = !enabled
         actionStatus.isVisible = enabled
-        permissionStatus.text = if (enabled) {
-            getString(R.string.overlay_accessibility_ready)
-        } else {
+        permissionStatus.text = if (selectedMode == ScrollMode.TOUCH) {
             getString(R.string.overlay_accessibility_missing)
+        } else {
+            getString(shizukuStatusMessage(requireNotNull(shizukuState)))
         }
-        permissionStatus.setTextColor(getColor(if (enabled) R.color.status_ok else R.color.status_error))
+        permissionStatus.setTextColor(getColor(R.color.status_error))
+    }
+
+    private fun shizukuStatusMessage(state: ShizukuState): Int = when (state) {
+        ShizukuState.NOT_RUNNING -> R.string.shizuku_missing_message
+        ShizukuState.PERMISSION_REQUIRED -> R.string.shizuku_permission_needed_message
+        ShizukuState.PERMISSION_DENIED -> R.string.shizuku_permission_denied_message
+        ShizukuState.CONNECTING -> R.string.shizuku_connecting_message
+        ShizukuState.READY -> R.string.shizuku_ready_message
+        ShizukuState.UNSUPPORTED -> R.string.shizuku_too_old_message
     }
 
     private fun updateActionStatus(message: String, isError: Boolean) {
@@ -463,5 +572,11 @@ class OverlayService : Service() {
     companion object {
         const val ACTION_EXIT = "cz.teply.scrollit.action.EXIT"
         const val ACTION_SHOW_OVERLAY = "cz.teply.scrollit.action.SHOW_OVERLAY"
+
+        private var runningInstance: OverlayService? = null
+
+        fun refreshIfRunning() {
+            runningInstance?.refreshStoredSettings()
+        }
     }
 }
