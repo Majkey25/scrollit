@@ -27,7 +27,8 @@
         android:text="@string/overlay_accessibility_missing"
         android:textColor="@color/status_error"
         android:textSize="12sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/actionStatusText"

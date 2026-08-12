@@ -1,8 +1,8 @@
 # ScrollIt (Internal Samsung Auto-Scroll Tool)
 
 [![Repository](https://img.shields.io/badge/GitHub-Majkey25%2Fscrollit-181717?logo=github)](https://github.com/Majkey25/scrollit)
-[![Release](https://img.shields.io/github/v/release/Majkey25/scrollit?include_prereleases&display_name=tag)](https://github.com/Majkey25/scrollit/releases/tag/v1.0.0-beta.3)
-[![Download APK](https://img.shields.io/badge/Download-APK-111111?logo=android&logoColor=white)](https://github.com/Majkey25/scrollit/releases/download/v1.0.0-beta.3/scrollit-v1.0.0-beta.3-debug.apk)
+[![Release](https://img.shields.io/github/v/release/Majkey25/scrollit?include_prereleases&display_name=tag)](https://github.com/Majkey25/scrollit/releases/tag/v1.0.0-beta.4)
+[![Download APK](https://img.shields.io/badge/Download-APK-111111?logo=android&logoColor=white)](https://github.com/Majkey25/scrollit/releases/download/v1.0.0-beta.4/scrollit-v1.0.0-beta.4-debug.apk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-111111.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Android%2014%2B-111111?logo=android&logoColor=white)](https://developer.android.com)
 [![Language](https://img.shields.io/badge/Language-Kotlin-111111?logo=kotlin&logoColor=white)](https://kotlinlang.org)
@@ -16,9 +16,9 @@ ScrollIt is a Kotlin Android app for internal use on Samsung phones. It provides
 
 ScrollIt can now be downloaded directly from GitHub Releases.
 
-- Current GitHub prerelease: [ScrollIt v1.0.0-beta.3](https://github.com/Majkey25/scrollit/releases/tag/v1.0.0-beta.3)
-- Direct APK download: [scrollit-v1.0.0-beta.3-debug.apk](https://github.com/Majkey25/scrollit/releases/download/v1.0.0-beta.3/scrollit-v1.0.0-beta.3-debug.apk)
-- Published: August 7, 2026
+- Current GitHub prerelease: [ScrollIt v1.0.0-beta.4](https://github.com/Majkey25/scrollit/releases/tag/v1.0.0-beta.4)
+- Direct APK download: [scrollit-v1.0.0-beta.4-debug.apk](https://github.com/Majkey25/scrollit/releases/download/v1.0.0-beta.4/scrollit-v1.0.0-beta.4-debug.apk)
+- Published: August 12, 2026
 - Package: debug-signed APK for direct testing outside Google Play
 
 ## What the app does
@@ -27,10 +27,8 @@ ScrollIt can now be downloaded directly from GitHub Releases.
 - Opens the exact Android settings screens needed to enable permissions.
 - Starts a floating, draggable overlay above other apps.
 - Performs repeated downward-page scrolling using `AccessibilityService` + `dispatchGesture()`.
-- Supports two behavior modes from the main app:
-  - **Stable** (more conservative and reliable)
-  - **Smooth** (smaller/faster gesture cycle)
-- Uses **10 speed levels** in overlay, controlled only by **+ / -** buttons.
+- Uses near-continuous gesture batches to reduce visible pauses between strokes.
+- Uses **30 persistent speed levels**, controlled from the main screen or overlay.
 - Collapses into a small edge bubble and expands back on tap.
 
 ## Required permissions
@@ -69,14 +67,14 @@ This repository now publishes installable APK files from GitHub tags that start 
 
 ### Current release
 
-1. GitHub release page: [v1.0.0-beta.3](https://github.com/Majkey25/scrollit/releases/tag/v1.0.0-beta.3)
-2. Downloaded asset name: `scrollit-v1.0.0-beta.3-debug.apk`
+1. GitHub release page: [v1.0.0-beta.4](https://github.com/Majkey25/scrollit/releases/tag/v1.0.0-beta.4)
+2. Downloaded asset name: `scrollit-v1.0.0-beta.4-debug.apk`
 3. Release channel: prerelease
 
 ### How new releases are published
 
 1. Push the commit to `main`
-2. Create a tag such as `v1.0.0-beta.3` or `v1.0.0`
+2. Create a tag such as `v1.0.0-beta.4` or `v1.0.0`
 3. Push the tag to GitHub
 4. GitHub Actions builds the APK and attaches it to the matching release
 
@@ -116,17 +114,13 @@ adb install -r C:\Users\teply\Documents\scrollit\app\build\outputs\apk\debug\app
 ## How to test all features
 
 1. Open ScrollIt and check both status rows are **Enabled**.
-2. In **Advanced tuning**, set:
-   - mode (Stable / Smooth)
-   - distance
-   - interval
-   - gesture duration
-3. Tap **Launch floating overlay**.
+2. Choose a speed from `1..30`; optionally expand **Motion details**.
+3. Tap **Open controls**.
 4. Drag overlay to desired place.
 5. Tap **Start** on long page (Samsung Internet / Chrome).
 6. Verify page scrolls downward repeatedly.
 7. Tap **+** and **-**:
-   - speed number updates `1..10`
+   - speed number updates `1..30`
    - change applies while scrolling is already running
 8. Tap **Stop** and verify scrolling stops immediately.
 9. Tap **Hide** and verify bubble appears on screen edge.
@@ -149,7 +143,6 @@ app/src/main/java/cz/teply/scrollit/
   MainActivity.kt
   OverlayService.kt
   ScrollAccessibilityService.kt
-  ScrollMode.kt
   ScrollSettings.kt
   ScrollSettingsStore.kt
   ScrollSpeed.kt

@@ -12,7 +12,7 @@ class ScrollAccessibilityService : AccessibilityService() {
     private var speedLevel = ScrollSpeed.DEFAULT_LEVEL
     private var settings = ScrollSettings.defaults
     private var running = false
-    private val repeatScroll = Runnable { dispatchNextGesture() }
+    private val repeatScroll = Runnable { dispatchNextBatch() }
 
     override fun onServiceConnected() {
         instance = this
@@ -37,7 +37,7 @@ class ScrollAccessibilityService : AccessibilityService() {
         speedLevel = ScrollSpeed.clamp(level)
         settings = newSettings
         running = true
-        return dispatchNextGesture()
+        return dispatchNextBatch()
     }
 
     fun updateSpeedLevel(level: Int) {
@@ -55,7 +55,7 @@ class ScrollAccessibilityService : AccessibilityService() {
 
     fun isAutoScrollRunning(): Boolean = running
 
-    private fun dispatchNextGesture(): AutoScrollResult {
+    private fun dispatchNextBatch(): AutoScrollResult {
         val profile = ScrollGestureProfileFactory.create(settings, speedLevel)
 
         val path = Path()
@@ -64,22 +64,27 @@ class ScrollAccessibilityService : AccessibilityService() {
         path.moveTo(width * ScrollConfig.gestureXFraction, height * profile.startYFraction)
         path.lineTo(width * ScrollConfig.gestureXFraction, height * profile.endYFraction)
 
-        val gesture = GestureDescription.Builder()
-            .addStroke(
+        val gestureBuilder = GestureDescription.Builder()
+        GestureBatchTiming.strokeStartTimes(
+            profile,
+            GestureDescription.getMaxStrokeCount(),
+        ).forEach { startTimeMs ->
+            gestureBuilder.addStroke(
                 GestureDescription.StrokeDescription(
                     path,
-                    0L,
+                    startTimeMs,
                     profile.gestureDurationMs,
                 ),
             )
-            .build()
+        }
+        val gesture = gestureBuilder.build()
 
         val accepted = dispatchGesture(
             gesture,
             object : GestureResultCallback() {
                 override fun onCompleted(gestureDescription: GestureDescription?) {
                     if (running) {
-                        handler.postDelayed(repeatScroll, profile.intervalMs)
+                        handler.post(repeatScroll)
                     }
                 }
 

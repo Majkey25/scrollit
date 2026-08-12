@@ -6,29 +6,29 @@ import org.junit.Test
 
 class ScrollGestureProfileFactoryTest {
     @Test
-    fun levelOne_profileUsesTheSlowestReadableClamp() {
+    fun levelOne_profileStaysSlowButAvoidsVisiblePauses() {
         val profile = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 1)
         val distance = profile.startYFraction - profile.endYFraction
 
-        assertTrue(profile.gestureDurationMs >= 1800L)
-        assertTrue(profile.intervalMs >= 450L)
+        assertTrue(profile.gestureDurationMs >= 1400L)
+        assertTrue(profile.intervalMs <= 32L)
         assertEquals(ScrollConfig.minGestureDistanceFraction, distance, 0.0001f)
     }
 
     @Test
-    fun firstFiveLevels_areSlowerThanOldLevelOneBaseline() {
-        val extraSlow = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 1)
-        val baseline = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 6)
+    fun defaultProfile_usesANearContinuousGap() {
+        val profile = ScrollGestureProfileFactory.create(
+            ScrollSettings.defaults,
+            ScrollSpeed.DEFAULT_LEVEL,
+        )
 
-        assertTrue(extraSlow.gestureDurationMs > baseline.gestureDurationMs)
-        assertTrue(extraSlow.intervalMs > baseline.intervalMs)
-        assertTrue((extraSlow.startYFraction - extraSlow.endYFraction) < (baseline.startYFraction - baseline.endYFraction))
+        assertTrue(profile.intervalMs in 4L..24L)
     }
 
     @Test
     fun higherSpeed_levelsIncreaseMovementAndReduceDelay() {
         val slow = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 1)
-        val fast = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 15)
+        val fast = ScrollGestureProfileFactory.create(ScrollSettings.defaults, 30)
 
         assertTrue(fast.gestureDurationMs < slow.gestureDurationMs)
         assertTrue(fast.intervalMs < slow.intervalMs)
@@ -43,7 +43,7 @@ class ScrollGestureProfileFactoryTest {
                 intervalMs = ScrollSettings.MIN_INTERVAL_MS,
                 gestureDurationMs = ScrollSettings.MIN_GESTURE_DURATION_MS,
             ),
-            15,
+            30,
         )
 
         assertTrue(profile.intervalMs >= ScrollConfig.minGestureIntervalMs)
