@@ -9,5 +9,5 @@
     <color name="control_on_primary">#0A0A0A</color>
     <color name="control_secondary">#252523</color>
     <color name="status_ok">@color/text_primary</color>
-    <color name="status_error">@color/text_secondary</color>
+    <color name="status_error">#FFB4AB</color>
 </resources>

@@ -21,6 +21,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.core.view.isVisible
 
 class OverlayService : Service() {
     private lateinit var windowManager: WindowManager
@@ -51,6 +52,8 @@ class OverlayService : Service() {
             return START_NOT_STICKY
         }
 
+        selectedSpeedLevel = ScrollSettingsStore.load(this).speedLevel
+        ScrollAccessibilityService.instance?.updateSpeedLevel(selectedSpeedLevel)
         if (expandedView == null && bubbleView == null) {
             showExpandedOverlay()
         } else {
@@ -127,17 +130,11 @@ class OverlayService : Service() {
         view.findViewById<View>(R.id.overlayDragHandle).setOnTouchListener(createDragTouchListener(isBubble = false))
 
         view.findViewById<Button>(R.id.speedMinusButton).setOnClickListener {
-            selectedSpeedLevel = ScrollSpeed.stepDown(selectedSpeedLevel)
-            ScrollAccessibilityService.instance?.updateSpeedLevel(selectedSpeedLevel)
-            renderSpeedLevel()
-            renderRunningState()
+            updateSelectedSpeedLevel(ScrollSpeed.stepDown(selectedSpeedLevel))
         }
 
         view.findViewById<Button>(R.id.speedPlusButton).setOnClickListener {
-            selectedSpeedLevel = ScrollSpeed.stepUp(selectedSpeedLevel)
-            ScrollAccessibilityService.instance?.updateSpeedLevel(selectedSpeedLevel)
-            renderSpeedLevel()
-            renderRunningState()
+            updateSelectedSpeedLevel(ScrollSpeed.stepUp(selectedSpeedLevel))
         }
 
         view.findViewById<Button>(R.id.startStopButton).setOnClickListener {
@@ -234,6 +231,15 @@ class OverlayService : Service() {
             windowManager.addView(bubble, bubbleLayoutParams)
             animateOverlayIn(bubble)
         }
+    }
+
+    private fun updateSelectedSpeedLevel(level: Int) {
+        selectedSpeedLevel = ScrollSpeed.clamp(level)
+        val settings = ScrollSettingsStore.load(this).copy(speedLevel = selectedSpeedLevel)
+        ScrollSettingsStore.save(this, settings)
+        ScrollAccessibilityService.instance?.updateSpeedLevel(selectedSpeedLevel)
+        renderSpeedLevel()
+        renderRunningState()
     }
 
     private fun animateOverlayIn(view: View) {
@@ -345,7 +351,10 @@ class OverlayService : Service() {
     private fun refreshPermissionStatus() {
         val view = expandedView ?: return
         val permissionStatus = view.findViewById<TextView>(R.id.permissionStatusText)
+        val actionStatus = view.findViewById<TextView>(R.id.actionStatusText)
         val enabled = PermissionState.isAccessibilityEnabled(this)
+        permissionStatus.isVisible = !enabled
+        actionStatus.isVisible = enabled
         permissionStatus.text = if (enabled) {
             getString(R.string.overlay_accessibility_ready)
         } else {

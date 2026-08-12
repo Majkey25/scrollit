@@ -66,12 +66,12 @@ jobs:
           mkdir -p dist
           cp app/build/outputs/apk/debug/app-debug.apk "dist/${{ steps.meta.outputs.apk_name }}"
           cat <<'EOF' > dist/release-notes.md
-          ScrollIt monochrome interface update.
+          ScrollIt smooth scrolling update.
 
-          - Monochrome light and dark themes
-          - Compact floating controller with a 48 dp edge bubble
-          - Restrained panel, bubble, and Start/Stop transitions
-          - Fix floating controls startup crash
+          - Near-continuous batched scrolling with shorter gaps
+          - 30 persistent speed levels
+          - Compact main screen inspired by ScanIt
+          - Accessibility warning only when scrolling cannot work
           - Debug-signed APK for manual installation
           EOF
 
