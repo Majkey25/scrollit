@@ -8,6 +8,7 @@ object ScrollSettingsStore {
     private const val KEY_INTERVAL_MS = "interval_ms"
     private const val KEY_GESTURE_DURATION_MS = "gesture_duration_ms"
     private const val KEY_SPEED_LEVEL = "speed_level"
+    private const val KEY_SCROLL_MODE = "scroll_mode"
 
     fun load(context: Context): ScrollSettings {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -21,6 +22,7 @@ object ScrollSettingsStore {
                 .coerceIn(ScrollSettings.MIN_GESTURE_DURATION_MS, ScrollSettings.MAX_GESTURE_DURATION_MS),
             speedLevel = prefs.getInt(KEY_SPEED_LEVEL, defaults.speedLevel)
                 .coerceIn(ScrollSpeed.MIN_LEVEL, ScrollSpeed.MAX_LEVEL),
+            mode = ScrollMode.fromStoredValue(prefs.getString(KEY_SCROLL_MODE, defaults.mode.storedValue)),
         )
     }
 
@@ -31,6 +33,7 @@ object ScrollSettingsStore {
             .putInt(KEY_INTERVAL_MS, settings.intervalMs)
             .putInt(KEY_GESTURE_DURATION_MS, settings.gestureDurationMs)
             .putInt(KEY_SPEED_LEVEL, settings.speedLevel)
+            .putString(KEY_SCROLL_MODE, settings.mode.storedValue)
             .apply()
     }
 }

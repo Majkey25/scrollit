@@ -11,8 +11,8 @@ android {
         applicationId = "cz.teply.scrollit"
         minSdk = 26
         targetSdk = 34
-        versionCode = 5
-        versionName = "1.0.0-beta.5"
+        versionCode = 6
+        versionName = "1.0.0-beta.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -38,6 +38,11 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+
+    buildFeatures {
+        aidl = true
+        buildConfig = true
+    }
 }
 
 dependencies {
@@ -45,6 +50,9 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("com.google.android.material:material:1.12.0")
+    implementation("dev.rikka.shizuku:api:13.1.5")
+    implementation("dev.rikka.shizuku:provider:13.1.5")
+    implementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
 
     testImplementation("junit:junit:4.13.2")
 

@@ -5,6 +5,7 @@ data class ScrollSettings(
     val intervalMs: Int,
     val gestureDurationMs: Int,
     val speedLevel: Int = ScrollSpeed.DEFAULT_LEVEL,
+    val mode: ScrollMode = ScrollMode.TOUCH,
 ) {
     companion object {
         const val MIN_DISTANCE_PERCENT = 6
@@ -19,6 +20,7 @@ data class ScrollSettings(
             intervalMs = 90,
             gestureDurationMs = 900,
             speedLevel = ScrollSpeed.DEFAULT_LEVEL,
+            mode = ScrollMode.TOUCH,
         )
     }
 }

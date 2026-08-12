@@ -66,12 +66,13 @@ jobs:
           mkdir -p dist
           cp app/build/outputs/apk/debug/app-debug.apk "dist/${{ steps.meta.outputs.apk_name }}"
           cat <<'EOF' > dist/release-notes.md
-          ScrollIt smooth scrolling update.
+          ScrollIt AutoScroll update.
 
-          - Near-continuous batched scrolling
-          - 30 slower speed levels; level 15 matches the previous minimum
-          - Compact main screen inspired by ScanIt
-          - Accessibility warning only when scrolling cannot work
+          - Touch remains the default and works without Shizuku
+          - AutoScroll injects small native mouse-wheel events through Shizuku
+          - 30 slow speed levels work in both modes
+          - Clear red status when the selected backend is unavailable
+          - Shizuku setup guide in the README
           - Debug-signed APK for manual installation
           EOF
 
