@@ -35,6 +35,10 @@ ScrollIt can now be downloaded directly from GitHub Releases.
 
 ## Required permissions
 
+[Privacy policy, terms and data deletion](https://majkey25.github.io/scrollit/)
+are linked from the main screen. Version 1.0.1 asks for explicit Accessibility
+gesture consent and removes unused screen-content retrieval capability.
+
 1. **Draw over other apps** (`SYSTEM_ALERT_WINDOW`)
 2. One scroll backend:
    - **Touch mode:** Accessibility service (ScrollIt Accessibility)

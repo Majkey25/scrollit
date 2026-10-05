@@ -34,6 +34,9 @@ class ScrollAccessibilityService : AccessibilityService() {
 
     fun startAutoScroll(level: Int, newSettings: ScrollSettings): AutoScrollResult {
         stopAutoScroll()
+        if (!ScrollSettingsStore.hasAccessibilityConsent(this)) {
+            return AutoScrollResult.Failed(getString(R.string.accessibility_consent_required))
+        }
         speedLevel = ScrollSpeed.clamp(level)
         settings = newSettings
         running = true
