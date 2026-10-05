@@ -18,12 +18,13 @@
 <p>ScrollIt, Android package <code>cz.teply.scrollit</code>, is published by Matěj Teplý, developer name Majkey. Contact: <a href="mailto:majkeylab@gmail.com">majkeylab@gmail.com</a>.</p>
 <p>The app has no Internet permission, developer account, analytics, advertisements, payments or developer server. It does not upload screen contents, activity history or personal data.</p>
 <ul>
-<li><strong>Touch mode:</strong> Android Accessibility sends repeated swipe gestures after you press Start in the floating controls. The app does not request screen-content retrieval and does not inspect text, passwords or messages. It does not decide which apps or controls to use.</li>
+<li><strong>Touch mode:</strong> Android Accessibility sends repeated swipe gestures after you press Start in the floating controls. The published v1.0.0 APK requests Android screen-content access, but its scroll service ignores window events and does not read or save screen text. Version 1.0.1 removes that unused capability and adds a separate in-app consent prompt. Neither version decides which apps or controls to use.</li>
 <li><strong>AutoScroll mode:</strong> optional Shizuku authorization lets the app inject a continuous touch stream at your chosen speed. This grants privileged input access. Use only when you understand Shizuku's setup. See the <a href="https://shizuku.rikka.app/guide/setup/">official Shizuku guide</a>.</li>
 <li><strong>Floating controls:</strong> the overlay permission displays Start, Stop and other controls over the current app. The foreground notification indicates that the controls are active.</li>
-<li><strong>Storage:</strong> the app privately stores speed, motion settings, selected mode and accessibility consent. Android may back up these preferences according to your device backup settings. The developer cannot access those backups.</li>
+<li><strong>Storage:</strong> the app privately stores speed, motion settings and selected mode. Version 1.0.1 also stores accessibility consent. Android may back up these preferences according to your device backup settings. The developer cannot access those backups.</li>
 </ul>
 <p>ScrollIt is a general-purpose scrolling tool and is not directed at children. It does not create profiles or request age information.</p>
+<p>The 1.0.1 changes are available in source. The replacement APK is not yet published because its original signing key must be preserved for an update that keeps your app data. Check the <a href="https://github.com/Majkey25/scrollit/releases">release page</a> for available APK versions.</p>
 </section>
 <section id="delete"><h2>Stop access and delete data</h2>
 <p>Press Stop to end scrolling or Exit to close the controls. Disable ScrollIt in Android Settings → Accessibility to revoke gesture access; revoke overlay permission in Android settings and optional Shizuku authorization in Shizuku.</p>
