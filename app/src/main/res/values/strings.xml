@@ -5,6 +5,12 @@
     <string name="accessibility_service_description">Continuously scrolls the current screen at your chosen speed.</string>
     <string name="accessibility_service_label">ScrollIt Accessibility</string>
     <string name="app_name">ScrollIt</string>
+    <string name="privacy_and_terms">Privacy, terms and data deletion</string>
+    <string name="browser_unavailable">No browser is available. Contact majkeylab@gmail.com for the policy.</string>
+    <string name="accessibility_consent_title">Allow scrolling with Accessibility?</string>
+    <string name="accessibility_consent_body">ScrollIt uses Android Accessibility to send repeated swipe gestures to the app on screen after you press Start. It does not read screen text, passwords or messages, record your browsing, or send data to a server. Press Stop or Exit in the floating controls to stop. You can withdraw access in Android Settings → Accessibility → ScrollIt.</string>
+    <string name="accessibility_consent_accept">Agree and continue</string>
+    <string name="accessibility_consent_required">Open ScrollIt and review Accessibility access first.</string>
     <string name="decrease_speed">Decrease scroll speed</string>
     <string name="default_speed_number">15</string>
     <string name="default_speed_value">15 / 30</string>

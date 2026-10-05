@@ -10,6 +10,15 @@ object ScrollSettingsStore {
     private const val KEY_SPEED_LEVEL = "speed_level"
     private const val KEY_SCROLL_MODE = "scroll_mode"
 
+    fun hasAccessibilityConsent(context: Context): Boolean =
+        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            .getBoolean("accessibility_consent_v1", false)
+
+    fun acceptAccessibilityConsent(context: Context) {
+        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
+            .putBoolean("accessibility_consent_v1", true).apply()
+    }
+
     fun load(context: Context): ScrollSettings {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         val defaults = ScrollSettings.defaults

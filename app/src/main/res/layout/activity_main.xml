@@ -308,5 +308,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp" />
         </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/privacyButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/privacy_and_terms" />
     </LinearLayout>
 </ScrollView>

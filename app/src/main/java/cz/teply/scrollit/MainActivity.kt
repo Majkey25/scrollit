@@ -1,6 +1,7 @@
 package cz.teply.scrollit
 
 import android.content.Intent
+import android.content.ActivityNotFoundException
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import rikka.shizuku.ShizukuProvider
 
 class MainActivity : AppCompatActivity() {
@@ -70,6 +72,13 @@ class MainActivity : AppCompatActivity() {
         openAccessibilitySettingsButton.setOnClickListener { openModeDependencySetup() }
         findViewById<Button>(R.id.launchOverlayButton).setOnClickListener { launchOverlay() }
         advancedSettingsButton.setOnClickListener { toggleAdvancedSettings() }
+        findViewById<Button>(R.id.privacyButton).setOnClickListener {
+            try {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://majkey25.github.io/scrollit/")))
+            } catch (_: ActivityNotFoundException) {
+                Toast.makeText(this, R.string.browser_unavailable, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     override fun onStart() {
@@ -251,7 +260,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openAccessibilitySettings() {
-        startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        withAccessibilityConsent { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
+    }
+
+    private fun withAccessibilityConsent(action: () -> Unit) {
+        if (ScrollSettingsStore.hasAccessibilityConsent(this)) {
+            action()
+            return
+        }
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.accessibility_consent_title)
+            .setMessage(R.string.accessibility_consent_body)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.accessibility_consent_accept) { _, _ ->
+                ScrollSettingsStore.acceptAccessibilityConsent(this)
+                action()
+            }
+            .show()
     }
 
     private fun openModeDependencySetup() {
@@ -306,6 +331,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun launchOverlay() {
+        if (ScrollSettingsStore.load(this).mode == ScrollMode.TOUCH &&
+            !ScrollSettingsStore.hasAccessibilityConsent(this)
+        ) {
+            withAccessibilityConsent(::launchOverlay)
+            return
+        }
         if (!PermissionState.hasOverlayPermission(this)) {
             Toast.makeText(this, R.string.overlay_permission_needed, Toast.LENGTH_LONG).show()
             openOverlaySettings()

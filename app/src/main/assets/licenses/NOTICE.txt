@@ -1,0 +1,16 @@
+ScrollIt third-party notices
+
+This APK includes APACHE-2.0.txt and SHIZUKU-MIT.txt alongside this file.
+
+Shizuku API and provider 13.1.5, Copyright (c) 2021 RikkaW, MIT License.
+https://github.com/RikkaApps/Shizuku-API
+
+AndroidHiddenApiBypass 6.1, LSPosed contributors, Apache License 2.0.
+https://github.com/LSPosed/AndroidHiddenApiBypass
+
+Material Components for Android 1.12.0, Google contributors, Apache License 2.0.
+https://github.com/material-components/material-components-android
+
+AndroidX and Kotlin components retain their upstream Apache 2.0 notices.
+https://source.android.com/docs/setup/about/licenses
+https://github.com/JetBrains/kotlin
