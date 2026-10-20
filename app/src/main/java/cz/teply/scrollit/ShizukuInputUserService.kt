@@ -45,7 +45,7 @@ private class InputEventInjector {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             HiddenApiBypass.addHiddenApiExemptions("Landroid/hardware/input/")
         }
-        val className = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val className = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             "android.hardware.input.InputManagerGlobal"
         } else {
             "android.hardware.input.InputManager"
