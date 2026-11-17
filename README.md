@@ -61,7 +61,7 @@ Non-root Shizuku must be started again after every phone restart. If Shizuku is 
 
 ## Build APK
 
-> Note: this repository uses text-only launcher scripts (`gradlew`, `gradlew.bat`) that call a local Gradle installation.
+The Gradle wrapper downloads the pinned Gradle version and verifies its SHA-256 checksum. JDK 17 and Android SDK Platform 37 are required.
 
 ### Windows (recommended)
 
